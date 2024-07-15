@@ -1,0 +1,12 @@
+{
+  "compilerOptions": {
+    "lib": ["ES2015"],
+    "outDir": "./dist",
+    "rootDir": "./src",
+    "strict": true,
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+  },
+  "exclude": ["node_modules"],
+  "include": ["src"] // Include only the src directory
+}
