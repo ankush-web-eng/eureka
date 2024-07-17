@@ -17,6 +17,7 @@ export default function CitySelector({ email }: CitySelectorProps) {
     const [cities, setCities] = useState<City[]>([]);
     const [selectedCity, setSelectedCity] = useState<string>('');
     const [loading, setLoading] = useState<boolean>(true);
+    const [sending, setSending] = useState<boolean>(false);
 
     const router = useRouter();
 
@@ -37,6 +38,7 @@ export default function CitySelector({ email }: CitySelectorProps) {
 
     const handleSubmit = async (e: FormEvent) => {
         e.preventDefault();
+        setSending(true);
         try {
             const res = await axios.post(`http://localhost:4000/patient/user/create/${email}`, { city: selectedCity });
             if (res.status === 200) {
@@ -44,13 +46,15 @@ export default function CitySelector({ email }: CitySelectorProps) {
             }
         } catch (error) {
             console.error('Error submitting city:', error);
+        }finally{
+            setSending(false);
         }
     };
 
     if (loading) {
         return (
             <div className="h-screen flex justify-center items-center">
-                <LuLoader size={60} color="blue" className="animate-spin" />
+                <LuLoader size={60} color="black" className="animate-spin" />
             </div>
         );
     }
@@ -74,7 +78,7 @@ export default function CitySelector({ email }: CitySelectorProps) {
                     ))}
                 </select>
                 <button className="px-3 py-2 bg-black text-white dark:bg-white dark:text-black rounded-xl" type="submit">
-                    Submit
+                    {sending ? <LuLoader size={60} color="white" className="animate-spin" /> : 'Submit'}
                 </button>
             </form>
         </div>
