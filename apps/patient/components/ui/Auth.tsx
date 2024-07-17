@@ -1,9 +1,11 @@
 "use client"
 
 import { signIn, useSession, signOut } from "next-auth/react"
+import { useRouter } from "next/navigation"
 
 export default function Auth() {
 
+  const router = useRouter()
   const { data: session } = useSession()
   const email = session?.user?.email
 
@@ -11,7 +13,9 @@ export default function Auth() {
     if (email) {
       signOut()
     } else {
-      signIn('google')
+      signIn('google').then(()=>{
+        router.push('/verify')
+      })
     }
   }
 
