@@ -25,6 +25,7 @@ model Doctor {
   address      String
   profile      String
   phone        String
+  fee          Int
   diseases     String[]
   slots        Slot[]
   appointments Appointment[]
@@ -56,12 +57,12 @@ model History {
 }
 
 model Slot {
-  id        String   @id @default(uuid())
-  date      DateTime
-  doctorId  String
-  doctor    Doctor   @relation(fields: [doctorId], references: [id])
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  id           String        @id @default(uuid())
+  date         DateTime
+  doctorId     String
+  doctor       Doctor        @relation(fields: [doctorId], references: [id])
+  createdAt    DateTime      @default(now())
+  updatedAt    DateTime      @updatedAt
   appointments Appointment[]
   history      History[]
 }

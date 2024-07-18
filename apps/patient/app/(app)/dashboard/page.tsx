@@ -1,15 +1,17 @@
 import DoctorCard from "@/components/DoctorCard"
 
 interface Doctor {
+    id: string;
     name: string;
     hospital: string;
     slots: Slot[];
     profile: string;
     city: string;
+    fee: number;
 }
 
 interface Slot {
-    id: number;
+    id: string;
     date: string;
     time: string;
 }
@@ -17,46 +19,48 @@ interface Slot {
 export default function Page() {
 
     const doctor = {
+        id: "56gfg83ruf794bfb",
         name: "John Doe",
         hospital: "City Hospital",
+        fee : 100,
         slots: [
             {
-                id: 1,
+                id: "1",
                 date: "12/12/2021",
                 time: "10:00 AM"
             },
             {
-                id: 2,
+                id: "2",
                 date: "12/12/2021",
                 time: "11:00 AM"
             },
             {
-                id: 3,
+                id: "3",
                 date: "12/12/2021",
                 time: "12:00 PM"
             },
             {
-                id: 4,
+                id: "4",
                 date: "12/12/2021",
                 time: "01:00 PM"
             },
             {
-                id: 5,
+                id: "5",
                 date: "12/12/2021",
                 time: "02:00 PM"
             },
             {
-                id: 6,
+                id: "6",
                 date: "12/12/2021",
                 time: "03:00 PM"
             },
             {
-                id: 7,
+                id: "7",
                 date: "12/12/2021",
                 time: "04:00 PM"
             },
             {
-                id: 8,
+                id: "8",
                 date: "12/12/2021",
                 time: "05:00 PM"
             }
@@ -71,12 +75,6 @@ export default function Page() {
             <h2 className="text-3xl font-extrabold text-gray-900 mb-6">Our Doctors</h2>
             <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
               {/* {doctor.map((doctor : Doctor, index : any) => ( */}
-                <DoctorCard params={doctor} />
-                <DoctorCard params={doctor} />
-                <DoctorCard params={doctor} />
-                <DoctorCard params={doctor} />
-                <DoctorCard params={doctor} />
-                <DoctorCard params={doctor} />
                 <DoctorCard params={doctor} />
                 <DoctorCard params={doctor} />
                 <DoctorCard params={doctor} />

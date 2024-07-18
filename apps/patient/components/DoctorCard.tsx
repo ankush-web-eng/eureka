@@ -1,15 +1,18 @@
 import Image from "next/image";
+import { BookingAlertdialog } from "./layout/includes/BookingAlert";
 
 interface Doctor {
+    id: string;
     name: string;
     hospital: string;
     slots: Slot[];
     profile: string;
     city: string;
+    fee: number;
 }
 
 interface Slot {
-    id: number;
+    id: string;
     date: string;
     time: string;
 }
@@ -30,11 +33,8 @@ export default function DoctorCard({ params }: { params: Doctor }) {
                     </h3>
                 </div>
                 <div className="overflow-y-auto no-scrollbar max-h-32 pr-2">
-                    {params.slots.map((slot: Slot, index : any) => (
-                        <div key={index} className="flex justify-between text-sm mb-1 pb-1 border-b last:border-b-0">
-                            <p className="text-gray-700">{slot.date}</p>
-                            <p className="text-blue-600 font-medium">{slot.time}</p>
-                        </div>
+                    {params.slots.map((slot: Slot, index: any) => (
+                        <BookingAlertdialog slot={slot} name={params.name} fee={params.fee} key={index} />
                     ))}
                 </div>
             </div>
