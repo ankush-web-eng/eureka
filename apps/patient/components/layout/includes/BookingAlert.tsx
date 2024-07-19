@@ -1,3 +1,4 @@
+'use client'
 import {
     AlertDialog,
     AlertDialogAction,
@@ -25,6 +26,7 @@ import {
     DialogTrigger,
 } from "@/components/ui/dialog"
 import BookingConfirmDialog from "./BookingConfirm";
+import { useRef } from "react";
 
 
 interface Slot {
@@ -34,8 +36,25 @@ interface Slot {
 }
 
 export function BookingAlertdialog({ slot, name, fee }: { slot: Slot, name: string, fee: number }) {
+
+    const dialogRef = useRef<HTMLButtonElement>(null);
+
+    const dialogOpen = () => {
+        dialogRef.current?.click();
+    }
+
     return (
         <div className="cursor-pointer">
+            <div className="hidden">
+                <Dialog >
+                    <DialogTrigger asChild>
+                        <button ref={dialogRef}>Continue</button>
+                    </DialogTrigger>
+                    <DialogContent className="sm:max-w-md">
+                        <BookingConfirmDialog params={{ name: name, fee: fee }} />
+                    </DialogContent>
+                </Dialog>
+            </div>
             <AlertDialog>
                 <AlertDialogTrigger asChild>
                     <div className="flex justify-between text-sm mb-1 pb-1 border-b last:border-b-0">
@@ -52,16 +71,7 @@ export function BookingAlertdialog({ slot, name, fee }: { slot: Slot, name: stri
                     </AlertDialogHeader>
                     <AlertDialogFooter>
                         <AlertDialogCancel>Cancel</AlertDialogCancel>
-                        <Button>
-                            <Dialog>
-                                <DialogTrigger asChild>
-                                    <button >Continue</button>
-                                </DialogTrigger>
-                                <DialogContent className="sm:max-w-md">
-                                    <BookingConfirmDialog params={{ name: name, fee: fee }} />
-                                </DialogContent>
-                            </Dialog>
-                        </Button>
+                        <AlertDialogAction onClick={dialogOpen}>Continue</AlertDialogAction>
                     </AlertDialogFooter>
                 </AlertDialogContent>
             </AlertDialog>

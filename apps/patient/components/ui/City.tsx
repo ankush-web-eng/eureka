@@ -61,7 +61,7 @@ export default function CitySelector({ email }: CitySelectorProps) {
 
     return (
         <div className="h-screen flex justify-center items-center bg-inherit">
-            <form onSubmit={handleSubmit}>
+            <form className='space-x-4' onSubmit={handleSubmit}>
                 <select
                     name="city"
                     id="city"

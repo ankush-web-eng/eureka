@@ -44,7 +44,7 @@ export default function Page() {
     if (loading) {
         return (
             <div className="h-screen flex justify-center items-center">
-                <LuLoader size={60} color="blue" className="animate-spin" />
+                <LuLoader size={60} color="black" className="animate-spin" />
             </div>
         );
     }

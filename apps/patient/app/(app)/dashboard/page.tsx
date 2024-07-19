@@ -1,4 +1,8 @@
-import DoctorCard from "@/components/DoctorCard"
+import dynamic from "next/dynamic";
+
+const DoctorCard = dynamic(() => import("@/components/DoctorCard"));
+const CityFilter = dynamic(() => import("@/components/layout/CityFilter"), {ssr: false});
+const DiseaseFilter = dynamic(() => import("@/components/layout/DiseaseFilter"), {ssr: false});
 
 interface Doctor {
     id: string;
@@ -72,6 +76,10 @@ export default function Page() {
     return (
         <div className="bg-gray-100 py-8 px-4 sm:px-6 lg:px-8">
           <div className="max-w-7xl mx-auto">
+            <div className="flex justify-between items-center w-full">
+                <CityFilter />
+                <DiseaseFilter />
+            </div>
             <h2 className="text-3xl font-extrabold text-gray-900 mb-6">Our Doctors</h2>
             <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
               {/* {doctor.map((doctor : Doctor, index : any) => ( */}
