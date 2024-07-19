@@ -5,16 +5,16 @@ import { signIn } from 'next-auth/react';
 
 export default function SignIn() {
 
-    const searchParams = useSearchParams();
-    const callbackUrl = searchParams.get('callbackUrl') || "/";
     const router = useRouter()
-
+    
     const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
         const formdata = new FormData(e.currentTarget);
         const email = formdata.get('email') as string;
+        const callbackUrl =  "/verify";
+        
         signIn('email', { email, callbackUrl }).then(() => {
-            router.push('/verify')
+            router.push(callbackUrl)
         })
     };
 
