@@ -24,7 +24,7 @@ model Doctor {
   city         String
   address      String
   profile      String
-  phone        String
+  phone        String        @unique
   fee          Int
   diseases     String[]
   slots        Slot[]

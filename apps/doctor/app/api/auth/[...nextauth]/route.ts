@@ -10,15 +10,15 @@ const authOptions = {
   providers: [
     EmailProvider({
       server: {
-        host: process.env.EMAIL_SERVER_HOST,
-        port: process.env.EMAIL_SERVER_PORT,
+        host: "smtp.gmail.com",
+        port: 587,
         auth: {
           user: process.env.EMAIL_SERVER_USER,
           pass: process.env.EMAIL_SERVER_PASSWORD,
         },
       },
-      from: process.env.EMAIL_FROM,
-      sendVerificationRequest: async ({ identifier, url, token, provider }) => {
+      from: "noreply@gmail.com",
+      sendVerificationRequest: async ({ identifier, url, provider }) => {
         const { host } = new URL(url);
         const transport = createTransport(provider.server);
         const result = await transport.sendMail({
@@ -36,7 +36,7 @@ const authOptions = {
     })
   ],
   adapter: PrismaAdapter(prisma),
-  secret: process.env.NEXTAUTH_SECRET,
+  secret: process.env.NEXTAUTH_SECRET || "ilovenextjsanddevops",
 }
 
 function text({ url, host } : { url: string, host: string }) {
@@ -88,6 +88,6 @@ function html({ url, host } : { url: string, host: string }) {
   `;
 }
 
-const handler = NextAuth(authOptions)
+const handler = NextAuth(authOptions);
 
-export {handler as GET, handler as POST}
+export { handler as GET, handler as POST };
