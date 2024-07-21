@@ -26,8 +26,14 @@ export default function Verify() {
     }, [session, router])
 
     useEffect(() => {
-        chechUser()
-    }, [chechUser])
+        setTimeout(() => {
+            if (session) {
+                chechUser()
+            } else {
+                router.push('/api/auth/signin')
+            }
+        }, 1500);
+    }, [chechUser, session, router])
 
     return (
         <div className="">
