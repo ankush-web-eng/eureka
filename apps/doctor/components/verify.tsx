@@ -18,7 +18,6 @@ export default function Verify() {
         try {
             if (session?.user?.email) {
                 const res = await axios.get(`http://localhost:4000/doctor/user/${session.user.email}`)
-                console.log("Status code is", res.status)
                 if (res.status === 200) {
                     router.push("/dashboard")
                     return;
@@ -40,7 +39,7 @@ export default function Verify() {
             if (session) {
                 checkUser()
             } else {
-                router.push('/api/auth/signin')
+                window.location.reload()
             }
         }, 1500);
         return () => clearTimeout(timer)

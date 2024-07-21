@@ -1,6 +1,8 @@
-import React, { useState, ChangeEvent, FormEvent, useEffect } from 'react';
+import React, { useState, ChangeEvent, FormEvent, useEffect, useRef } from 'react';
 import { useRouter } from 'next/navigation';
 import axios from 'axios';
+import { useSession } from 'next-auth/react';
+import { LuLoader } from 'react-icons/lu';
 
 interface FormData {
     email: string;
@@ -20,7 +22,13 @@ interface City {
 
 const DoctorVerificationForm = () => {
     const router = useRouter();
+    const { data: session } = useSession()
+
+    const fileInput = useRef<HTMLInputElement>(null);
+
     const [cities, setCities] = useState<City[]>([]);
+    const [loading, setLoading] = useState(false);
+
 
     const [formData, setFormData] = useState<FormData>({
         email: '',
@@ -34,12 +42,9 @@ const DoctorVerificationForm = () => {
         diseases: [],
     });
 
-    const handleChange = (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+    const handleChange = (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
         const { name, value } = e.target;
-        setFormData(prevState => ({
-            ...prevState,
-            [name]: value
-        }));
+        setFormData(prevState => ({ ...prevState, [name]: value }));
     };
 
     const handleDiseases = (e: ChangeEvent<HTMLInputElement>) => {
@@ -47,12 +52,22 @@ const DoctorVerificationForm = () => {
         setFormData(prevState => ({ ...prevState, diseases }));
     };
 
-    const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
+    const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
         e.preventDefault();
-        console.log({
-            ...formData,
-            fee: parseInt(formData.fee, 10)
-        });
+        setLoading(true);
+        try {
+            const payload = { ...formData, fee: parseInt(formData.fee, 10) };
+            const res = await axios.post(`http://localhost:4000/doctor/user/create/${session?.user?.email}`, payload);
+            if (res.status === 200) {
+                router.push('/dashboard');
+                return;
+            }
+        } catch (error) {
+            console.error('Error submitting form:', error);
+        } finally {
+            setLoading(false);
+        }
+        console.log({ ...formData, fee: parseInt(formData.fee, 10) });
     };
 
     useEffect(() => {
@@ -64,127 +79,81 @@ const DoctorVerificationForm = () => {
                 console.error('Error fetching cities:', error);
             }
         };
-
         fetchCities();
     }, []);
 
     return (
-        <div className="max-w-2xl mx-auto p-4">
-            <h1 className="text-2xl font-bold mb-4">Doctor Verification</h1>
-            <form onSubmit={handleSubmit} className="space-y-4">
-                <div>
-                    <label htmlFor="name" className="block mb-1">Name</label>
-                    <input
-                        type="text"
-                        id="name"
-                        name="name"
-                        value={formData.name}
-                        onChange={handleChange}
-                        required
-                        className="w-full p-2 border rounded"
-                    />
-                </div>
-                <div>
-                    <label htmlFor="hospital" className="block mb-1">Hospital</label>
-                    <input
-                        type="text"
-                        id="hospital"
-                        name="hospital"
-                        value={formData.hospital}
-                        onChange={handleChange}
-                        required
-                        className="w-full p-2 border rounded"
-                    />
-                </div>
-                <div>
-                    <label htmlFor="city" className="block mb-1">City</label>
-                    <input
-                        type="text"
-                        id="city"
-                        name="city"
-                        value={formData.city}
-                        onChange={handleChange}
-                        required
-                        className="w-full p-2 border rounded"
-                    />
-                    <select
-                    name="city"
-                    id="city"
-                    value={formData.city}
-                    onChange={(e) => setFormData({ ...formData, city: e.target.value })}
-                    required
-                    className='border py-3 rounded-2xl px-2'
-                >
-                    <option value="" disabled>Select your city</option>
-                    {cities.map((city, index) => (
-                        <option key={index} value={city.city}>
-                            {city.city}
-                        </option>
-                    ))}
-                </select>
-                </div>
-                <div>
-                    <label htmlFor="address" className="block mb-1">Address</label>
-                    <textarea
-                        id="address"
-                        name="address"
-                        value={formData.address}
-                        onChange={handleChange}
-                        required
-                        className="w-full p-2 border rounded"
-                    />
-                </div>
-                <div>
-                    <label htmlFor="profile" className="block mb-1">Profile</label>
-                    <textarea
-                        id="profile"
-                        name="profile"
-                        value={formData.profile}
-                        onChange={handleChange}
-                        required
-                        className="w-full p-2 border rounded"
-                    />
-                </div>
-                <div>
-                    <label htmlFor="phone" className="block mb-1">Phone</label>
-                    <input
-                        type="tel"
-                        id="phone"
-                        name="phone"
-                        value={formData.phone}
-                        onChange={handleChange}
-                        required
-                        className="w-full p-2 border rounded"
-                    />
-                </div>
-                <div>
-                    <label htmlFor="fee" className="block mb-1">Fee</label>
-                    <input
-                        type="number"
-                        id="fee"
-                        name="fee"
-                        value={formData.fee}
-                        onChange={handleChange}
-                        required
-                        className="w-full p-2 border rounded"
-                    />
-                </div>
-                <div>
-                    <label htmlFor="diseases" className="block mb-1">Diseases (comma-separated)</label>
-                    <input
-                        type="text"
-                        id="diseases"
-                        name="diseases"
-                        value={formData.diseases.join(', ')}
-                        onChange={handleDiseases}
-                        required
-                        className="w-full p-2 border rounded"
-                    />
-                </div>
-                <button type="submit" className="w-full bg-blue-500 text-white p-2 rounded hover:bg-blue-600">
-                    Submit for Verification
-                </button>
-            </form>
+        <div className="min-h-screen flex items-center justify-center bg-gray-100 py-12 px-4 sm:px-6 lg:px-8">
+            <div className="max-w-md w-full space-y-8 bg-white p-10 rounded-xl shadow-md">
+                <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900">
+                    Doctor Verification
+                </h2>
+                <form onSubmit={handleSubmit} className="mt-8 space-y-6">
+                    <div className="rounded-md shadow-sm -space-y-px">
+                        {['name', 'hospital', 'email', 'phone', 'fee'].map((field) => (
+                            <div key={field}>
+                                <label htmlFor={field} className="sr-only">{field.charAt(0).toUpperCase() + field.slice(1)}</label>
+                                <input
+                                    id={field}
+                                    name={field}
+                                    type={field === 'email' ? 'email' : field === 'fee' ? 'number' : 'text'}
+                                    required
+                                    className="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-black focus:border-black focus:z-10 sm:text-sm"
+                                    placeholder={field.charAt(0).toUpperCase() + field.slice(1)}
+                                    value={formData[field as keyof FormData]}
+                                    onChange={handleChange}
+                                />
+                            </div>
+                        ))}
+                        <select
+                            name="city"
+                            id="city"
+                            value={formData.city}
+                            onChange={handleChange}
+                            required
+                            className="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-black focus:border-black focus:z-10 sm:text-sm"
+                        >
+                            <option value="" disabled>Select your city</option>
+                            {cities.map((city, index) => (
+                                <option key={index} value={city.city}>{city.city}</option>
+                            ))}
+                        </select>
+                        <textarea
+                            id="address"
+                            name="address"
+                            placeholder="Address"
+                            value={formData.address}
+                            onChange={handleChange}
+                            required
+                            className="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-black focus:border-black focus:z-10 sm:text-sm"
+                        />
+                        <input
+                            type='file'
+                            hidden
+                            ref = {fileInput}
+                        />
+                        <input
+                            type="text"
+                            id="diseases"
+                            name="diseases"
+                            placeholder="Diseases (comma-separated)"
+                            value={formData.diseases.join(', ')}
+                            onChange={handleDiseases}
+                            required
+                            className="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-b-md focus:outline-none focus:ring-black focus:border-black focus:z-10 sm:text-sm"
+                        />
+                        <button className='text-white bg-black rounded-md px-3 py-2' 
+                            onClick={() => {
+                            fileInput.current?.click();
+                        }}>Add Image</button>
+                    </div>
+                    <div>
+                        <button type="submit" className="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-black hover:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-black">
+                            {loading ? <LuLoader className="animate-spin" color="gray" size={20} /> : "Submit for Verification"}
+                        </button>
+                    </div>
+                </form>
+            </div>
         </div>
     );
 };
