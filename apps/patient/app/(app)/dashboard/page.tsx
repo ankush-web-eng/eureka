@@ -21,7 +21,6 @@ interface Slot {
 }
 
 export default function Page() {
-
     const doctor = {
         id: "56gfg83ruf794bfb",
         name: "John Doe",
@@ -76,20 +75,20 @@ export default function Page() {
     return (
         <div className="bg-gray-100 py-8 px-4 sm:px-6 lg:px-8">
           <div className="max-w-7xl mx-auto">
-            <div className="flex justify-between items-center w-full">
+            <div className="flex justify-between items-center w-full mb-6">
                 <CityFilter />
                 <DiseaseFilter />
             </div>
-            <h2 className="text-3xl font-extrabold text-gray-900 mb-6">Our Doctors</h2>
-            <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-              {/* {doctor.map((doctor : Doctor, index : any) => ( */}
-                <DoctorCard params={doctor} />
-                <DoctorCard params={doctor} />
-                <DoctorCard params={doctor} />
-                <DoctorCard params={doctor} />
-              {/* ))} */}
+            <h2 className="text-3xl font-extrabold text-gray-900 mb-6">Nearby Doctors</h2>
+            <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
+              <DoctorCard params={doctor} />
+              <DoctorCard params={doctor} />
+              <DoctorCard params={doctor} />
+              <DoctorCard params={doctor} />
+              <DoctorCard params={doctor} />
+              <DoctorCard params={doctor} />
             </div>
           </div>
         </div>
-      );
+    );
 }

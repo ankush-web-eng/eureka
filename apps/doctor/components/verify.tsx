@@ -5,39 +5,50 @@ import { useSession } from "next-auth/react"
 import { useRouter } from "next/navigation"
 import { useCallback, useEffect, useState } from "react"
 import DoctorVerificationForm from "./includes/details"
+import { LuLoader } from "react-icons/lu"
 
 export default function Verify() {
 
-    const [verified, setVerified] = useState(true)
+    const [verified, setVerified] = useState(false)
 
     const { data: session } = useSession()
     const router = useRouter()
 
-    const chechUser = useCallback(async () => {
+    const checkUser = useCallback(async () => {
         try {
-            const res = await axios.get(`http://localhost:4000/doctor/user/${session?.user?.email}`)
-            if (res.status === 200) {
-                setVerified(true)
-                router.push("/dashboard")
-            } else if (res.status === 404) {
-                setVerified(false)
+            if (session?.user?.email) {
+                const res = await axios.get(`http://localhost:4000/doctor/user/${session.user.email}`)
+                console.log("Status code is", res.status)
+                if (res.status === 200) {
+                    router.push("/dashboard")
+                    return;
+                } else if (res.status === 201) {
+                    setVerified(true)
+                    return;
+                }
+            } else {
+                router.push('/signup')
+                return;
             }
-        } catch (error) { }
+        } catch (error) {
+            console.error("Error checking user:", error)
+        }
     }, [session, router])
 
     useEffect(() => {
-        setTimeout(() => {
+        const timer = setTimeout(() => {
             if (session) {
-                chechUser()
+                checkUser()
             } else {
                 router.push('/api/auth/signin')
             }
         }, 1500);
-    }, [chechUser, session, router])
+        return () => clearTimeout(timer)
+    }, [checkUser, session, router])
 
-    return (
-        <div className="">
-            {verified ? <div>Verifying...</div> : <DoctorVerificationForm />}
-        </div>
-    )
+    if (!verified) {
+        return <div className="h-screen flex justify-center items-center"><LuLoader className="animate-spin" color="gray" size={36} /></div>
+    }
+
+    return <DoctorVerificationForm />
 }
