@@ -1,6 +1,8 @@
 
 export default function Page(){
     return (
-        <div>Hi</div>
+        <div className="flex justify-center items-center h-screen bg-gray-100">
+            <h1>Dashboard</h1>
+        </div>
     )
 }

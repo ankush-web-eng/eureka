@@ -16,6 +16,7 @@ export default function Page() {
     const verifyUser = useCallback(async () => {
         if (status !== "authenticated" || !session?.user?.email) {
             setLoading(false);
+            router.push("/");
             return;
         }
 
@@ -44,7 +45,7 @@ export default function Page() {
     if (loading) {
         return (
             <div className="h-screen flex justify-center items-center">
-                <LuLoader size={60} color="black" className="animate-spin" />
+                <LuLoader size={60} color="gray" className="animate-spin" />
             </div>
         );
     }

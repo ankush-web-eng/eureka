@@ -4,11 +4,15 @@ import "@/styles/globals.css";
 import { SessionProvider } from "@/context/SessionProvider";
 import { getServerSession } from "next-auth";
 import { Toaster } from "@/components/ui/toaster"
+import { CityProvider } from "@/context/cityContext";
 
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: "MedZo",
+  title: {
+    default: "MedZo",
+    template: "%s | MedZo"
+  },
   description: "Book your appointment with your favourite doctor",
 };
 
@@ -24,8 +28,10 @@ export default async function RootLayout({
     <html lang="en">
       <body className={inter.className}>
         <SessionProvider session={session}>
-        <Toaster />
-          {children}
+          <Toaster />
+          <CityProvider>
+            {children}
+          </CityProvider>
         </SessionProvider>
       </body>
     </html>

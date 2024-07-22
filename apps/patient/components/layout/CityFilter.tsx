@@ -3,23 +3,25 @@
 import { useEffect, useState, FormEvent, useCallback } from 'react';
 import axios from 'axios';
 import { LuLoader } from 'react-icons/lu';
-import { useSession } from 'next-auth/react';
+import { useCity } from '@/context/cityContext';
 
 interface City {
     city: string;
 }
 
-interface CitySelectorProps {
-    email: string;
-}
-
 export default function CityFilter() {
+
+    const { selectedCity, setSelectedCity } = useCity();
+
     const [cities, setCities] = useState<City[]>([]);
-    const [selectedCity, setSelectedCity] = useState<string>("");
+    const [city, setCity] = useState<string>(selectedCity);
     const [loading, setLoading] = useState<boolean>(true);
     const [sending, setSending] = useState<boolean>(false);
 
-    const { data: session } = useSession()
+    const handleCityChange = (e: FormEvent<HTMLSelectElement>) => {
+        setSelectedCity(e.currentTarget.value);
+        setCity(e.currentTarget.value);
+    };
 
     const fetchCities = async () => {
         try {
@@ -31,23 +33,9 @@ export default function CityFilter() {
             setLoading(false);
         }
     };
-
-    const fetchUser = useCallback(async () => {
-        try {
-            const res = await axios.get(`http://localhost:4000/patient/user/${session?.user?.email}`);
-            setSelectedCity(res.data.city);
-        } catch (error) {
-            console.log('Error fetching user:', error);
-        }
-    }, [session])
-
     useEffect(() => {
         fetchCities();
     }, []);
-
-    useEffect(() => {
-        fetchUser()
-    }, [fetchUser])
 
 
     return (
@@ -56,8 +44,8 @@ export default function CityFilter() {
                 <select
                     name="city"
                     id="city"
-                    value={selectedCity}
-                    onChange={(e) => setSelectedCity(e.target.value)}
+                    value={city}
+                    onChange={handleCityChange}
                     required
                     className='border py-3 rounded-2xl px-2'
                 >

@@ -19,6 +19,7 @@ export default function Verify() {
             if (session?.user?.email) {
                 const res = await axios.get(`http://localhost:4000/doctor/user/${session.user.email}`)
                 if (res.status === 200) {
+                    setVerified(false)
                     router.push("/dashboard")
                     return;
                 } else if (res.status === 201) {
