@@ -16,7 +16,6 @@ export default function CityFilter() {
     const [cities, setCities] = useState<City[]>([]);
     const [city, setCity] = useState<string>(selectedCity);
     const [loading, setLoading] = useState<boolean>(true);
-    const [sending, setSending] = useState<boolean>(false);
 
     const handleCityChange = (e: FormEvent<HTMLSelectElement>) => {
         setSelectedCity(e.currentTarget.value);
@@ -56,9 +55,6 @@ export default function CityFilter() {
                         </option>
                     ))}
                 </select>
-                <button className="px-3 py-2 bg-black text-white dark:bg-white dark:text-black rounded-xl" type="submit">
-                    {sending ? <LuLoader size={60} color="white" className="animate-spin" /> : 'Apply'}
-                </button>
             </form>
         </div>
     );

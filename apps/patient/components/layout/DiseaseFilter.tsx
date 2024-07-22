@@ -15,8 +15,6 @@ export default function DiseaseFilter() {
     const [diseases, setDiseases] = useState<Disease[] | null>([]);
     const [selectedDisease, setSelectedDisease] = useState<string>("");
     const [loading, setLoading] = useState<boolean>(true);
-    const [sending, setSending] = useState<boolean>(false);
-
 
     const fetchDiseases = async () => {
         try {
@@ -52,9 +50,6 @@ export default function DiseaseFilter() {
                         </option>
                     ))}
                 </select>
-                <button className="px-3 py-2 bg-black text-white dark:bg-white dark:text-black rounded-xl" type="submit">
-                    {sending ? <LuLoader size={60} color="white" className="animate-spin" /> : 'Apply'}
-                </button>
             </form>
         </div>
     );
