@@ -3,9 +3,9 @@
 import { Button } from "@/components/ui/button"
 import { signOut, useSession } from "next-auth/react"
 
-export default function Page(){
+export default function Page() {
 
-   const email = useSession().data?.user?.email
+    const email = useSession().data?.user?.email
 
     return (
         <div className="h-screen flex justify-center items-center text-2xl">
@@ -18,6 +18,6 @@ export default function Page(){
                     }
                 }
             } >{email ? "SignOut" : "SignIn"}</Button>
-            </div>
+        </div>
     )
 }
