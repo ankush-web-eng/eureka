@@ -3,14 +3,25 @@ import axios from "axios";
 import { useSession } from "next-auth/react";
 import { createContext, useCallback, useEffect, useState, ReactNode, useContext } from "react";
 
-interface CityContextProps {
+interface UserDetails {
+  id: string;
+  email: string;
+  createdAt: string;
+  city: string;
+  appointments: any[];
+  history: any[];
+}
+
+interface UserContextProps {
+  userDetails: UserDetails | null;
   selectedCity: string;
   setSelectedCity: React.Dispatch<React.SetStateAction<string>>;
 }
 
-const CityContext = createContext<CityContextProps | null>(null);
+const UserContext = createContext<UserContextProps | null>(null);
 
-const CityProvider = ({ children }: { children: ReactNode }) => {
+const UserProvider = ({ children }: { children: ReactNode }) => {
+  const [userDetails, setUserDetails] = useState<UserDetails | null>(null);
   const [selectedCity, setSelectedCity] = useState<string>("");
 
   const { data: session } = useSession();
@@ -19,6 +30,7 @@ const CityProvider = ({ children }: { children: ReactNode }) => {
     if (session?.user?.email) {
       try {
         const res = await axios.get(`http://localhost:4000/patient/user/${session.user.email}`);
+        setUserDetails(res.data);
         setSelectedCity(res.data.city);
       } catch (error) {
         console.log('Error fetching user:', error);
@@ -31,19 +43,18 @@ const CityProvider = ({ children }: { children: ReactNode }) => {
   }, [fetchUser]);
 
   return (
-    <CityContext.Provider value={{ selectedCity, setSelectedCity }}>
+    <UserContext.Provider value={{ userDetails, selectedCity, setSelectedCity }}>
       {children}
-    </CityContext.Provider>
+    </UserContext.Provider>
   );
 };
 
-// Custom hook for using the city context
-const useCity = () => {
-  const context = useContext(CityContext);
+const useUser = () => {
+  const context = useContext(UserContext);
   if (!context) {
-    throw new Error("useCity must be used within a CityProvider");
+    throw new Error("useUser must be used within a UserProvider");
   }
   return context;
 };
 
-export { CityProvider, useCity };
+export { UserProvider, useUser };

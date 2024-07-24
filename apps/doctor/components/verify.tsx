@@ -42,7 +42,7 @@ export default function Verify() {
             } else {
                 window.location.reload()
             }
-        }, 1500);
+        }, 2500);
         return () => clearTimeout(timer)
     }, [checkUser, session, router])
 

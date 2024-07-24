@@ -1,5 +1,5 @@
 'use client'
-import { useCity } from "@/context/cityContext";
+import { useUser } from "@/context/userContext";
 import axios from "axios";
 import dynamic from "next/dynamic";
 import { useCallback, useEffect, useState } from "react";
@@ -25,11 +25,10 @@ interface Doctor {
     phone: string;
     fee: number;
     diseases: string[];
-    slots: Slot[];
 }
 
 export default function Doctors() {
-    const { selectedCity } = useCity();
+    const { selectedCity } = useUser();
     const [doctors, setDoctors] = useState<Doctor[]>([]);
 
     const getDoctors = useCallback(async () => {
@@ -50,7 +49,7 @@ export default function Doctors() {
             <div className="max-w-7xl mx-auto">
                 <div className="flex justify-between items-center w-full mb-6">
                     <CityFilter />
-                    <DiseaseFilter />
+                    {/* <DiseaseFilter /> */}
                 </div>
                 <h2 className="text-3xl font-extrabold text-gray-900 mb-6">Nearby Doctors</h2>
                 <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">

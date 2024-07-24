@@ -1,9 +1,8 @@
 'use client'
 
-import { useEffect, useState, FormEvent, useCallback } from 'react';
+import { useEffect, useState, FormEvent } from 'react';
 import axios from 'axios';
-import { LuLoader } from 'react-icons/lu';
-import { useCity } from '@/context/cityContext';
+import { useUser } from '@/context/userContext';
 
 interface City {
     city: string;
@@ -11,7 +10,7 @@ interface City {
 
 export default function CityFilter() {
 
-    const { selectedCity, setSelectedCity } = useCity();
+    const { selectedCity, setSelectedCity } = useUser();
 
     const [cities, setCities] = useState<City[]>([]);
     const [city, setCity] = useState<string>(selectedCity);
