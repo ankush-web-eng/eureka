@@ -2,8 +2,11 @@
 
 import { Button } from "@/components/ui/button"
 import { signOut, useSession } from "next-auth/react"
+import { useState } from "react";
 
 export default function Page() {
+
+    const [dateTime, setDateTime] = useState<Date | null>(null);
 
     const email = useSession().data?.user?.email
 
