@@ -11,17 +11,21 @@ import {
     DropdownMenuSeparator,
     DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
+import { Button } from "@/components/ui/button"
+import { useRouter } from "next/navigation"
 
 type Checked = DropdownMenuCheckboxItemProps["checked"]
 
 export default function UserIcon() {
-    const [showStatusBar, setShowStatusBar] = React.useState<Checked>(true)
-    const [showActivityBar, setShowActivityBar] = React.useState<Checked>(false)
+    const router = useRouter()
+    // const route = window.location.pathname
 
     return (
         <DropdownMenu>
             <DropdownMenuTrigger asChild>
-                <svg xmlns="http://www.w3.org/2000/svg"
+                <svg
+                    className="cursor-pointer"
+                    xmlns="http://www.w3.org/2000/svg"
                     width="24"
                     height="24"
                     fill="none"
@@ -35,16 +39,16 @@ export default function UserIcon() {
                 <DropdownMenuLabel>Account</DropdownMenuLabel>
                 <DropdownMenuSeparator />
                 <DropdownMenuCheckboxItem
-                    checked={showStatusBar}
-                    onCheckedChange={setShowStatusBar}
                 >
-                    Status Bar
+                    <button onClick={() => router.push('/dashboard')}>Dashboard</button>
                 </DropdownMenuCheckboxItem>
                 <DropdownMenuCheckboxItem
-                    checked={showActivityBar}
-                    onCheckedChange={setShowActivityBar}
                 >
-                    Activity Bar
+                    <button onClick={() => router.push('/appointments')}>Appointments</button>
+                </DropdownMenuCheckboxItem>
+                <DropdownMenuCheckboxItem
+                >
+                    <button onClick={() => router.push('/history')}>History</button>
                 </DropdownMenuCheckboxItem>
             </DropdownMenuContent>
         </DropdownMenu>

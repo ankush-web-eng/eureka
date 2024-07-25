@@ -13,7 +13,7 @@ import {
     DrawerTrigger,
 } from "@/components/ui/drawer"
 import DateTimePicker from "./layout/includes/DateTime";
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { useSession } from "next-auth/react";
 import axios from "axios";
 import { Session } from "inspector";
@@ -30,6 +30,7 @@ interface Doctor {
     phone: string;
     fee: number;
     diseases: string[];
+    slots: Slot[];
 }
 
 interface Slot {
@@ -38,26 +39,28 @@ interface Slot {
     time: string;
 }
 
-export default function DoctorCard({ doctor, slots }: { doctor: Doctor, slots?: Slot }) {
+export default function DoctorCard({ doctor }: { doctor: Doctor }) {
 
     const [loading, setLoading] = useState<boolean>(false);
-    const {data:session} = useSession();
-    const {toast} = useToast()
+    const { data: session } = useSession();
+    const { toast } = useToast()
     const [dateTime, setDateTime] = useState<Date | null>(null);
     const handleDateTimeChange = (date: Date | null) => {
         setDateTime(date);
     }
+    const cancelRef = useRef<HTMLButtonElement>(null);
 
     const payLoad = {
-        doctor : doctor.id,
-        date : dateTime,
+        doctor: doctor.id,
+        date: dateTime,
     }
 
-    const handleSubmit = async() => {
+    const handleSubmit = async () => {
         setLoading(true);
         try {
             const response = await axios.post(`http://localhost:4000/patient/appointments/create?patientEmail=${session?.user?.email}`, payLoad);
             if (response.status === 200) {
+                cancelRef?.current?.click();
                 toast({
                     title: "Appointment booked successfully",
                     description: `Dr. ${doctor.name} will see you on ${dateTime}`
@@ -70,7 +73,7 @@ export default function DoctorCard({ doctor, slots }: { doctor: Doctor, slots?: 
                 description: "Please try again later",
                 variant: "destructive"
             })
-        } finally{
+        } finally {
             setLoading(false);
         }
     }
@@ -153,7 +156,7 @@ export default function DoctorCard({ doctor, slots }: { doctor: Doctor, slots?: 
                         <DrawerFooter>
                             <Button className="w-full" onClick={handleSubmit}>{loading ? <LuLoader className="animate-spin" size={20} color="gray" /> : "Submit"}</Button>
                             <DrawerClose>
-                                <Button className="w-full" variant="outline">Cancel</Button>
+                                <Button ref={cancelRef} className="w-full" variant="outline">Cancel</Button>
                             </DrawerClose>
                         </DrawerFooter>
                     </DrawerContent>

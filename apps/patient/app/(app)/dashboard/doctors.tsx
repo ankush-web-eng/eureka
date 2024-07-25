@@ -25,6 +25,7 @@ interface Doctor {
     phone: string;
     fee: number;
     diseases: string[];
+    slots: Slot[];
 }
 
 export default function Doctors() {
