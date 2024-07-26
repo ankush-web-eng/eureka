@@ -4,17 +4,24 @@ import axios from 'axios'
 import { useRouter } from 'next/navigation'
 import { useState } from 'react'
 import { LuLoader } from 'react-icons/lu'
+import { useToast } from '../ui/use-toast'
 
 const SignUp = () => {
     const [email, setEmail] = useState('')
     const [loading, setLoading] = useState(false)
     const router = useRouter()
+    const { toast } = useToast()
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault()
         setLoading(true)
         try {
             const res = await axios.post('/api/signup', { email })
+            toast({
+                title: 'Success',
+                description: 'Check your email for verification',
+                duration: 2000
+            })
             if (res.status === 200) {
                 router.push('/api/auth/signin')
             }
@@ -22,7 +29,12 @@ const SignUp = () => {
             setEmail('')
             return;
         } catch (error) {
-
+            toast({
+                title: 'Error',
+                description: 'An error occurred',
+                duration: 2000,
+                variant: 'destructive'
+            })
         }
     }
 

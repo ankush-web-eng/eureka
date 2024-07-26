@@ -40,6 +40,7 @@ export default function Verify() {
             if (session) {
                 checkUser()
             } else {
+                // router.push('/api/auth/signin')
                 window.location.reload()
             }
         }, 2500);
