@@ -1,7 +1,10 @@
+import React, { useRef, useState } from 'react';
 import Image from "next/image";
 import { Button } from "./ui/button";
 import { LuLoader } from "react-icons/lu";
-
+import { useSession } from "next-auth/react";
+import axios from "axios";
+import { useToast } from "./ui/use-toast";
 import {
     Drawer,
     DrawerClose,
@@ -12,14 +15,15 @@ import {
     DrawerTitle,
     DrawerTrigger,
 } from "@/components/ui/drawer"
-import DateTimePicker from "./layout/includes/DateTime";
-import { useRef, useState } from "react";
-import { useSession } from "next-auth/react";
-import axios from "axios";
-import { Session } from "inspector";
-import { useToast } from "./ui/use-toast";
+import DateTimePicker from './layout/includes/DateTime';
 
-interface Doctor {
+export interface TimeSlot {
+    id: string;
+    startTime: Date;
+    endTime: Date;
+}
+
+export interface Doctor {
     id: string;
     email: string;
     name: string;
@@ -29,35 +33,37 @@ interface Doctor {
     profile: string;
     phone: string;
     fee: number;
+    availableDays: number[];
+    availableTimes: TimeSlot[];
     diseases: string[];
-    slots: Slot[];
-}
-
-interface Slot {
-    id: string;
-    date: string;
-    time: string;
 }
 
 export default function DoctorCard({ doctor }: { doctor: Doctor }) {
-
     const [loading, setLoading] = useState<boolean>(false);
     const { data: session } = useSession();
     const { toast } = useToast()
     const [dateTime, setDateTime] = useState<Date | null>(null);
+    const cancelRef = useRef<HTMLButtonElement>(null);
+
     const handleDateTimeChange = (date: Date | null) => {
         setDateTime(date);
     }
-    const cancelRef = useRef<HTMLButtonElement>(null);
 
     const payLoad = {
-        doctor: doctor.id,
+        doctorId: doctor.id,
         date: dateTime,
     }
 
     const handleSubmit = async () => {
         setLoading(true);
         try {
+            if (!dateTime) {
+                toast({
+                    title: "Please select a time slot to book appointment",
+                    variant: "destructive"
+                })
+                return;
+            }
             const response = await axios.post(`http://localhost:4000/patient/appointments/create?patientEmail=${session?.user?.email}`, payLoad);
             if (response.status === 200) {
                 cancelRef?.current?.click();
@@ -70,13 +76,15 @@ export default function DoctorCard({ doctor }: { doctor: Doctor }) {
             console.error(error);
             toast({
                 title: "Failed to book appointment",
-                description: "Please try again later",
+                description: "Server Side Error! Please try again later.",
                 variant: "destructive"
             })
         } finally {
             setLoading(false);
         }
     }
+
+    const daysOfWeek = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
 
     return (
         <div className="rounded-xl p-6 border border-gray-200 shadow-md hover:shadow-lg transition-all duration-300 w-full max-w-md bg-white">
@@ -107,21 +115,31 @@ export default function DoctorCard({ doctor }: { doctor: Doctor }) {
                 </div>
             </div>
 
-            {/* <div className="mt-4">
+            <div className="mt-4">
                 <h3 className="text-lg font-semibold mb-2 text-gray-800">
-                    Available Slots
+                    Available Days
                 </h3>
-                <div className="overflow-y-auto max-h-40 pr-2 space-y-2">
-                    {slots && slots.map((slot: Slot) => (
-                        <BookingAlertdialog 
-                            slot={slot} 
-                            name={doctor.name} 
-                            fee={doctor.fee} 
-                            key={slot.id} 
-                        />
+                <div className="flex flex-wrap gap-2">
+                    {doctor.availableDays && doctor.availableDays.map((day) => (
+                        <span key={day} className="bg-gray-100 text-gray-800 text-xs font-medium px-2.5 py-0.5 rounded">
+                            {daysOfWeek[day]}
+                        </span>
                     ))}
                 </div>
-            </div> */}
+            </div>
+
+            <div className="mt-4">
+                <h3 className="text-lg font-semibold mb-2 text-gray-800">
+                    Available Time Slots
+                </h3>
+                <div className="flex flex-wrap gap-2">
+                    {doctor.availableTimes.map((slot) => (
+                        <span key={slot.id} className="bg-gray-100 text-gray-800 text-xs font-medium px-2.5 py-0.5 rounded">
+                            {new Date(slot.startTime).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})} - {new Date(slot.endTime).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}
+                        </span>
+                    ))}
+                </div>
+            </div>
 
             <div className="mt-4">
                 <h3 className="text-lg font-semibold mb-2 text-gray-800">
@@ -137,7 +155,6 @@ export default function DoctorCard({ doctor }: { doctor: Doctor }) {
             </div>
 
             <div className="mt-4">
-
                 <Drawer>
                     <DrawerTrigger><Button>Book now</Button></DrawerTrigger>
                     <DrawerContent>
@@ -149,19 +166,20 @@ export default function DoctorCard({ doctor }: { doctor: Doctor }) {
                             </DrawerTitle>
                             <DrawerDescription>
                                 <div className="w-full flex justify-center items-center h-1/2">
-                                    <DateTimePicker onDateTimeChange={handleDateTimeChange} />
+                                    <DateTimePicker onDateTimeChange={handleDateTimeChange} doctor={doctor} />
                                 </div>
                             </DrawerDescription>
                         </DrawerHeader>
                         <DrawerFooter>
-                            <Button className="w-full" onClick={handleSubmit}>{loading ? <LuLoader className="animate-spin" size={20} color="gray" /> : "Submit"}</Button>
+                            <Button className="w-full" onClick={handleSubmit}>
+                                {loading ? <LuLoader className="animate-spin" size={20} color="gray" /> : "Submit"}
+                            </Button>
                             <DrawerClose>
                                 <Button ref={cancelRef} className="w-full" variant="outline">Cancel</Button>
                             </DrawerClose>
                         </DrawerFooter>
                     </DrawerContent>
                 </Drawer>
-
             </div>
         </div>
     );

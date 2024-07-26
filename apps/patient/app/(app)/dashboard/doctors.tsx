@@ -3,30 +3,11 @@ import { useUser } from "@/context/userContext";
 import axios from "axios";
 import dynamic from "next/dynamic";
 import { useCallback, useEffect, useState } from "react";
+import { Doctor, TimeSlot } from "@/components/DoctorCard";
 
 const DoctorCard = dynamic(() => import("@/components/DoctorCard"));
 const CityFilter = dynamic(() => import("@/components/layout/CityFilter"), { ssr: false });
 const DiseaseFilter = dynamic(() => import("@/components/layout/DiseaseFilter"), { ssr: false });
-
-interface Slot {
-    id: string;
-    date: string;
-    time: string;
-}
-
-interface Doctor {
-    id: string;
-    email: string;
-    name: string;
-    hospital: string;
-    city: string;
-    address: string;
-    profile: string;
-    phone: string;
-    fee: number;
-    diseases: string[];
-    slots: Slot[];
-}
 
 export default function Doctors() {
     const { selectedCity } = useUser();
@@ -35,6 +16,7 @@ export default function Doctors() {
     const getDoctors = useCallback(async () => {
         try {
             const response = await axios.get<Doctor[]>(`http://localhost:4000/patient/doctors?city=${selectedCity}`);
+            console.log(response.data)
             setDoctors(response.data);
         } catch (error) {
             console.error('Error fetching doctors:', error);
