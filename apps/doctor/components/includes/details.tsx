@@ -27,8 +27,8 @@ interface City {
 }
 
 interface TimeSlot {
-    start: Date;
-    end: Date;
+    startTime: Date;
+    endTime: Date;
 }
 
 const weekdays = [
@@ -58,7 +58,7 @@ const DoctorVerificationForm = () => {
 
     const [selectedWeekdays, setSelectedWeekdays] = useState<number[]>([]);
     const [timeSlots, setTimeSlots] = useState<TimeSlot[]>([]);
-    const [currentTimeSlot, setCurrentTimeSlot] = useState<TimeSlot>({ start: new Date(), end: new Date() });
+    const [currentTimeSlot, setCurrentTimeSlot] = useState<TimeSlot>({ startTime: new Date(), endTime: new Date() });
 
     const handleClick = async () => {
         if (imageRef.current) {
@@ -78,7 +78,7 @@ const DoctorVerificationForm = () => {
         diseases: [],
     });
 
-    const uploadImage = async (file: File): Promise<string | null> => {
+    const uploadImage = async (file: File): Promise<string> => {
         try {
             const formData = new FormData();
             formData.append('file', file as File);
@@ -88,44 +88,54 @@ const DoctorVerificationForm = () => {
             if (response.status !== 200) {
                 toast({
                     title: 'Error',
-                    description: 'An error occurred',
+                    description: 'Error uploading Image',
                     duration: 2000,
                     variant: 'destructive'
                 })
-                return null;
+                throw new Error('Error uploading image');
             }
             return response.data.url;
         } catch (error: any) {
             toast({
                 title: 'Error',
-                description: 'An error occurred',
+                description: 'Server Error in Uploading Image',
                 duration: 2000,
                 variant: 'destructive'
             })
-            return null;
+            throw new Error('Server Error uploading image');
         }
     };
 
     const createUser = async (email: string, payload: any): Promise<void> => {
-        const response = await axios.post(`${API_CREATE_USER}${email}`, payload);
-        if (response.status !== 200) {
+        try {
+            const response = await axios.post(`${API_CREATE_USER}${email}`, payload);
+            if (response.status !== 200) {
+                toast({
+                    title: 'Error',
+                    description: 'Server Error in verifying user',
+                    duration: 2000,
+                    variant: 'destructive'
+                })
+                throw new Error('Error creating user');
+            } else {
+                toast({
+                    title: 'Success',
+                    description: 'Doctor verification request submitted successfully',
+                    duration: 2000
+                })
+            }
+        } catch (error) {
             toast({
                 title: 'Error',
-                description: 'An error occurred',
+                description: 'Error in sending data to server',
                 duration: 2000,
                 variant: 'destructive'
             })
-            throw new Error('Error creating user');
-        } else {
-            toast({
-                title: 'Success',
-                description: 'Doctor verification request submitted successfully',
-                duration: 2000
-            })
         }
+        console.log(payload)
     };
 
-    const validateForm = (file: File | null): Promise<Boolean> => {
+    const validateForm = (file: File | null): void => {
         if (!file) {
             toast({
                 title: 'Error',
@@ -133,9 +143,8 @@ const DoctorVerificationForm = () => {
                 duration: 2000,
                 variant: 'destructive'
             })
-            return Promise.resolve(true);
+            throw new Error('Profile picture not uploaded');
         }
-        return Promise.resolve(false);
     };
 
     const handleWeekdayChange = (e: ChangeEvent<HTMLSelectElement>) => {
@@ -147,14 +156,14 @@ const DoctorVerificationForm = () => {
         );
     };
 
-    const handleTimeSlotChange = (start: Date, end: Date) => {
-        setCurrentTimeSlot({ start, end });
+    const handleTimeSlotChange = (startTime: Date, endTime: Date) => {
+        setCurrentTimeSlot({ startTime, endTime });
     };
 
     const addTimeSlot = () => {
-        if (currentTimeSlot.start && currentTimeSlot.end) {
+        if (currentTimeSlot.startTime && currentTimeSlot.endTime) {
             setTimeSlots([...timeSlots, currentTimeSlot]);
-            setCurrentTimeSlot({ start: new Date(), end: new Date() });
+            setCurrentTimeSlot({ startTime: new Date(), endTime: new Date() });
         }
     };
 
@@ -221,9 +230,8 @@ const DoctorVerificationForm = () => {
         e.preventDefault();
         setLoading(true);
         try {
-            if (await validateForm(file)) return;
+            validateForm(file);
             const url = await uploadImage(file as File);
-            if (url === null) return;
             if (timeSlots.length === 0) {
                 toast({
                     title: 'Error',
@@ -238,10 +246,10 @@ const DoctorVerificationForm = () => {
                 fee: parseInt(formData.fee, 10),
                 profile: url,
                 email: session?.user?.email,
-                weekdays: selectedWeekdays,
-                timeSlots: timeSlots
+                availableDays: selectedWeekdays,
+                availableTimes: timeSlots
             };
-            console.log(payload)
+            console.log("payload", payload)
             if (!session?.user?.email) throw new Error("User email not found");
             await createUser(session?.user?.email, payload);
             router.push('/dashboard');
@@ -249,7 +257,7 @@ const DoctorVerificationForm = () => {
             console.error('Error submitting form:', error);
             toast({
                 title: 'Error',
-                description: 'An error occurred',
+                description: 'Server Error',
                 duration: 2000,
                 variant: 'destructive'
             })
@@ -384,7 +392,7 @@ const DoctorVerificationForm = () => {
 
                     <div>
                         <label className="block text-sm font-medium text-gray-700 mb-1">Time Slots</label>
-                        <div className='flex items-center space-x-3 justify-start'>
+                        <div className='flex items-center space-x-3 justify-startTime'>
                             <TimeSlotPicker onTimeSlotChange={handleTimeSlotChange} />
                             <button
                                 type="button"
@@ -402,7 +410,7 @@ const DoctorVerificationForm = () => {
                             <div className="flex flex-wrap gap-2 mt-1">
                                 {timeSlots.map((slot, index) => (
                                     <span key={index} className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-indigo-100 text-indigo-800">
-                                        {`${formatTime(slot.start)} - ${formatTime(slot.end)}`}
+                                        {`${formatTime(slot.startTime)} - ${formatTime(slot.endTime)}`}
                                         <button onClick={() => removeTimeSlot(index)} className="ml-1 text-indigo-600 hover:text-indigo-800">
                                             ×
                                         </button>

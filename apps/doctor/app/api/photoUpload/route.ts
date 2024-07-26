@@ -11,7 +11,6 @@ export async function POST(req: NextRequest) {
     try {
         const formdata = await req.formData()
         const file = formdata.get('file') as File;
-        console.log(file);
         const arrayBuffer = await file.arrayBuffer()
         const buffer = new Uint8Array(arrayBuffer)
 
