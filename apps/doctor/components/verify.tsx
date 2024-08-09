@@ -17,7 +17,7 @@ export default function Verify() {
     const checkUser = useCallback(async () => {
         try {
             if (session?.user?.email) {
-                const res = await axios.get(`http://localhost:4000/doctor/user/${session.user.email}`)
+                const res = await axios.get(`${process.env.NEXT_PUBLIC_BACKEND_URL}/${session.user.email}`)
                 if (res.status === 200) {
                     setVerified(false)
                     router.push("/dashboard")
@@ -40,8 +40,7 @@ export default function Verify() {
             if (session) {
                 checkUser()
             } else {
-                // router.push('/api/auth/signin')
-                window.location.reload()
+                router.push('/api/auth/signin')
             }
         }, 2500);
         return () => clearTimeout(timer)

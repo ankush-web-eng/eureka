@@ -69,7 +69,7 @@ export default function DoctorCard({ doctor }: { doctor: Doctor }) {
                 cancelRef?.current?.click();
                 toast({
                     title: "Appointment booked successfully",
-                    description: `Dr. ${doctor.name} will see you on ${dateTime}`
+                    description: `Dr. ${doctor.name} will see you on ${dateTime.getDate()}/${dateTime.getMonth() + 1}/${dateTime.getFullYear()} at ${dateTime.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}`,
                 })
             }
         } catch (error) {

@@ -47,7 +47,6 @@ const DoctorVerificationForm = () => {
     const { toast } = useToast()
 
     const API_PHOTO_UPLOAD = '/api/photoUpload';
-    const API_CREATE_USER = 'http://localhost:4000/doctor/user/create/';
 
     const [cities, setCities] = useState<City[]>([]);
     const [loading, setLoading] = useState(false);
@@ -108,7 +107,7 @@ const DoctorVerificationForm = () => {
 
     const createUser = async (email: string, payload: any): Promise<void> => {
         try {
-            const response = await axios.post(`${API_CREATE_USER}${email}`, payload);
+            const response = await axios.post(`${process.env.NEXT_PUBLIC_BACKEND_URL}${email}`, payload);
             if (response.status !== 200) {
                 toast({
                     title: 'Error',
