@@ -40,7 +40,7 @@ export default function CitySelector({ email }: CitySelectorProps) {
         e.preventDefault();
         setSending(true);
         try {
-            const res = await axios.post(`http://localhost:4000/patient/user/create/${email}`, { city: selectedCity });
+            const res = await axios.post(`${process.env.NEXT_PUBLIC_BACKEND_URL}/patient/user/create/${email}`, { city: selectedCity });
             if (res.status === 200) {
                 router.push('/dashboard');
             }

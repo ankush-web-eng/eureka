@@ -15,7 +15,7 @@ export default function Doctors() {
 
     const getDoctors = useCallback(async () => {
         try {
-            const response = await axios.get<Doctor[]>(`http://localhost:4000/patient/doctors?city=${selectedCity}`);
+            const response = await axios.get<Doctor[]>(`${process.env.NEXT_PUBLIC_BACKEND_URL}?city=${selectedCity}`);
             console.log(response.data)
             setDoctors(response.data);
         } catch (error) {

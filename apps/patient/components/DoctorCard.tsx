@@ -64,7 +64,7 @@ export default function DoctorCard({ doctor }: { doctor: Doctor }) {
                 })
                 return;
             }
-            const response = await axios.post(`http://localhost:4000/patient/appointments/create?patientEmail=${session?.user?.email}`, payLoad);
+            const response = await axios.post(`${process.env.NEXT_PUBLIC_BACKEND_URL}/patient/appointments/create?patientEmail=${session?.user?.email}`, payLoad);
             if (response.status === 200) {
                 cancelRef?.current?.click();
                 toast({

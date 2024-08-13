@@ -29,7 +29,7 @@ const UserProvider = ({ children }: { children: ReactNode }) => {
   const fetchUser = useCallback(async () => {
     if (session?.user?.email) {
       try {
-        const res = await axios.get(`http://localhost:4000/patient/user/${session.user.email}`);
+        const res = await axios.get(`${process.env.NEXT_PUBLIC_BACKEND_URL}/patient/user/${session.user.email}`);
         setUserDetails(res.data);
         setSelectedCity(res.data.city);
       } catch (error) {

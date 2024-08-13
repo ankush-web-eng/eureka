@@ -21,7 +21,7 @@ export default function Page() {
         }
 
         try {
-            const res = await axios.get(`http://localhost:4000/patient/user/${session.user.email}`);
+            const res = await axios.get(`${process.env.NEXT_PUBLIC_BACKEND_URL}/${session.user.email}`);
             if (res.status === 200) {
                 router.push("/dashboard");
             } else if (res.status === 404) {
