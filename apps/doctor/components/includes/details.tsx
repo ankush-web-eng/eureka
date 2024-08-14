@@ -7,29 +7,9 @@ import { useSession } from 'next-auth/react';
 import { RiLoaderLine } from 'react-icons/ri';
 import { FaPencilAlt } from 'react-icons/fa';
 import { LuLoader } from 'react-icons/lu';
-import { useToast } from '../ui/use-toast';
-import TimeSlotPicker from '../extentions/TimePlotPicker';
-
-interface FormData {
-    email: string;
-    name: string;
-    hospital: string;
-    city: string;
-    address: string;
-    profile: string;
-    phone: string;
-    fee: string;
-    diseases: string[];
-}
-
-interface City {
-    city: string;
-}
-
-interface TimeSlot {
-    startTime: Date;
-    endTime: Date;
-}
+import { useToast } from '@/components/ui/use-toast';
+import TimeSlotPicker from '@/components/extentions/TimePlotPicker';
+import type { City, TimeSlot, FormData } from '@/types/DoctorVerificationFormDataType';
 
 const weekdays = [
     { name: 'Sunday', value: 0 },

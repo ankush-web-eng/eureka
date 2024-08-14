@@ -1,11 +1,13 @@
 'use client'
 
-import axios from "axios"
-import { useSession } from "next-auth/react"
-import { useRouter } from "next/navigation"
-import { useCallback, useEffect, useState } from "react"
-import DoctorVerificationForm from "./includes/details"
-import { LuLoader } from "react-icons/lu"
+import axios from "axios";
+import dynamic from "next/dynamic";
+import { useSession } from "next-auth/react";
+import { useRouter } from "next/navigation";
+import { useCallback, useEffect, useState } from "react";
+
+import DoctorVerificationFormSkeleton from "@/components/skeleton/DoctorVerificationFormSkeleton";
+const DoctorVerificationForm = dynamic(() => import('@/components/includes/details'), { ssr: false });
 
 export default function Verify() {
 
@@ -36,19 +38,12 @@ export default function Verify() {
     }, [session, router])
 
     useEffect(() => {
-        const timer = setTimeout(() => {
-            if (session) {
-                checkUser()
-            } else {
-                router.push('/api/auth/signin')
-            }
-        }, 2500);
-        return () => clearTimeout(timer)
+        checkUser();
     }, [checkUser, session, router])
 
-    if (!verified) {
-        return <div className="h-screen flex justify-center items-center"><LuLoader className="animate-spin" color="gray" size={36} /></div>
-    }
 
+    if (!verified) {
+        return <DoctorVerificationFormSkeleton />
+    }
     return <DoctorVerificationForm />
 }

@@ -20,7 +20,7 @@ export default function Page() {
                         window.location.href = "/api/auth/signin"
                     }
                 }
-            } >{email ? "SignOut" : "SignIn"}</Button>
+            } >{email ? `SignOut - ${email}` : "SignIn"}</Button>
         </div>
     )
 }
