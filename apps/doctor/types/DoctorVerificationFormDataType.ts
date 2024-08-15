@@ -1,19 +1,15 @@
 export interface FormData {
-    email: string;
-    name: string;
-    hospital: string;
-    city: string;
-    address: string;
-    profile: string;
-    phone: string;
-    fee: string;
-    diseases: string[];
-}
-export interface City {
-    city: string;
+  email: string;
+  name: string;
+  phone: string;
 }
 
 export interface TimeSlot {
-    startTime: Date;
-    endTime: Date;
+  startTime: Date;
+  endTime: Date;
+}
+
+export interface DoctorVerificationPayload extends FormData {
+  image: string;
+  availableTimes: TimeSlot[];
 }

@@ -7,7 +7,7 @@ import { useRouter } from "next/navigation";
 import { useCallback, useEffect, useState } from "react";
 
 import DoctorVerificationFormSkeleton from "@/components/skeleton/DoctorVerificationFormSkeleton";
-const DoctorVerificationForm = dynamic(() => import('@/components/includes/details'), { ssr: false });
+const DoctorVerificationForm = dynamic(() => import('@/components/includes/DoctorDetailsForm'), { ssr: false });
 
 export default function Verify() {
 
@@ -19,7 +19,7 @@ export default function Verify() {
     const checkUser = useCallback(async () => {
         try {
             if (session?.user?.email) {
-                const res = await axios.get(`${process.env.NEXT_PUBLIC_BACKEND_URL}/${session.user.email}`)
+                const res = await axios.get(`${process.env.NEXT_PUBLIC_BACKEND_URL}/doctor/user/${session.user.email}`)
                 if (res.status === 200) {
                     setVerified(false)
                     router.push("/dashboard")
@@ -29,7 +29,7 @@ export default function Verify() {
                     return;
                 }
             } else {
-                router.push('/signup')
+                router.push('/signin')
                 return;
             }
         } catch (error) {
@@ -42,8 +42,7 @@ export default function Verify() {
     }, [checkUser, session, router])
 
 
-    if (!verified) {
-        return <DoctorVerificationFormSkeleton />
-    }
+    if (!verified) return <DoctorVerificationFormSkeleton />
+    
     return <DoctorVerificationForm />
 }
