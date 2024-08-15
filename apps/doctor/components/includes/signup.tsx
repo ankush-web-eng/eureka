@@ -10,27 +10,30 @@ import { LuLoader } from 'react-icons/lu'
 import { useToast } from '../ui/use-toast'
 
 const SignUp = () => {
-    const [email, setEmail] = useState('')
-    const [verificationCode, setVerificationCode] = useState('')
-    const [loading, setLoading] = useState(false)
-    const [registered, setRegistered] = useState(false)
+    const [email, setEmail] = useState<string>('')
+    const [password, setPassword] = useState<string>('')
+    const [verificationCode, setVerificationCode] = useState<string>('')
+    const [loading, setLoading] = useState<boolean>(false)
+    const [registered, setRegistered] = useState<boolean>(false)
+
     const router = useRouter()
     const { toast } = useToast()
-    const {data:session} = useSession()
+    const { data: session } = useSession()
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault()
         setLoading(true)
+        localStorage.setItem('email', email)
         try {
-            const res = await axios.post('/api/signup', { email })
+            const res = await axios.post(`${process.env.NEXT_PUBLIC_BACKEND_URL}/doctor/signup`, { email, password })
             toast({
                 title: 'Success',
                 description: 'Check your email for verification',
                 duration: 2000
             })
             if (res.status === 200) {
-                // setRegistered(true)
-                router.push('/api/auth/signin')
+                setRegistered(true)
+                // router.push('/api/auth/signin')
             }
             setLoading(false)
             setEmail('')
@@ -50,14 +53,16 @@ const SignUp = () => {
         e.preventDefault()
         setLoading(true)
         try {
-            const res = await axios.post('/api/verify', { code: verificationCode })
+            const email = localStorage.getItem('email')
+            const res = await axios.post(`${process.env.NEXT_PUBLIC_BACKEND_URL}/doctor/verify`, { code: verificationCode, email })
             if (res.status === 200) {
                 toast({
                     title: 'Success',
                     description: 'Your account has been verified',
                     duration: 2000
                 })
-                router.push('/api/auth/signin')
+                localStorage.removeItem('email')
+                router.push('/signin')
             }
         } catch (error) {
             toast({
@@ -70,12 +75,6 @@ const SignUp = () => {
             setLoading(false)
         }
     }
-
-    useEffect(() => {
-        if (session){
-            router.replace('/')
-        }
-    }, [router, session])
 
     if (!registered) {
         return (
@@ -94,6 +93,20 @@ const SignUp = () => {
                                 required
                                 className="mt-1 block w-full rounded-md p-3 border-gray-300 shadow-sm focus:border-black focus:ring-black sm:text-sm"
                                 placeholder="Enter your email"
+                            />
+                        </div>
+                        <div>
+                            <label htmlFor="password" className="block text-sm font-medium text-gray-700">
+                                Password
+                            </label>
+                            <input
+                                type="password"
+                                id="password"
+                                value={password}
+                                onChange={(e) => setPassword(e.target.value)}
+                                required
+                                className="mt-1 block w-full rounded-md p-3 border-gray-300 shadow-sm focus:border-black focus:ring-black sm:text-sm"
+                                placeholder="Create a Password"
                             />
                         </div>
                         <button
