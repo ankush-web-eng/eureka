@@ -5,6 +5,7 @@ import "@/styles/globals.css";
 import { SessionProvider } from "@/context/SessionProvider"
 import { getServerSession } from "next-auth";
 import { Toaster } from "@/components/ui/toaster"
+import { DoctorProvider } from "@/context/DoctorProvider";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -26,8 +27,10 @@ export default async function RootLayout({
     <html lang="en">
       <body className={inter.className}>
         <SessionProvider session={session}>
-          <Toaster />
-          {children}
+          <DoctorProvider>
+            <Toaster />
+            {children}
+          </DoctorProvider>
         </SessionProvider>
       </body>
     </html>

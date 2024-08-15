@@ -310,7 +310,7 @@ const DoctorVerificationForm = () => {
                             type="submit"
                             className="group relative w-full flex justify-center py-2 px-4 border border-gray-300 text-sm font-medium rounded-md text-white bg-black hover:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500"
                         >
-                            {loading ? <LuLoader className="animate-spin" color="white" size={20} /> : "Submit for Verification"}
+                            {loading ? <LuLoader className="animate-spin" color="white" size={20} /> : "Update"}
                         </button>
                     </div>
                 </form>

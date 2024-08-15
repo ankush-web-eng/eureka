@@ -13,3 +13,13 @@ export interface DoctorVerificationPayload extends FormData {
   image: string;
   availableTimes: TimeSlot[];
 }
+
+export interface Doctor {
+  id: string;
+  email: string;
+  name?: string;
+  image?: string;
+  isVerified: boolean;
+  phone?: string;
+  hospitalId? : string;
+}
