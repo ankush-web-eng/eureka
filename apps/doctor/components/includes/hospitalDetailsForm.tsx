@@ -30,6 +30,8 @@ const HospitalDetailsForm = () => {
     const [imageSrc, setImageSrc] = useState<string | ArrayBuffer | null>(null);
     const imageRef = useRef<HTMLInputElement>(null);
 
+    const API_PHOTO_UPLOAD = '/api/photoUpload';
+
     const [formData, setFormData] = useState({
         name: '',
         city: '',
@@ -82,6 +84,34 @@ const HospitalDetailsForm = () => {
         setFile(selectedFile);
     };
 
+    const uploadImage = async (file: File): Promise<string> => {
+        try {
+            const formData = new FormData();
+            formData.append('file', file as File);
+            const response = await axios.post(API_PHOTO_UPLOAD, formData, {
+                headers: { 'Content-Type': 'multipart/form-data' },
+            });
+            if (response.status !== 200) {
+                toast({
+                    title: 'Error',
+                    description: 'Error uploading Image',
+                    duration: 2000,
+                    variant: 'destructive'
+                })
+                throw new Error('Error uploading image');
+            }
+            return response.data.url;
+        } catch (error: any) {
+            toast({
+                title: 'Error',
+                description: 'Server Error in Uploading Image',
+                duration: 2000,
+                variant: 'destructive'
+            })
+            throw new Error('Server Error uploading image');
+        }
+    };
+
     const handleChange = (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
         const { name, value } = e.target;
         setFormData(prevState => ({ ...prevState, [name]: value }));
@@ -117,20 +147,18 @@ const HospitalDetailsForm = () => {
                 return;
             }
 
+            const imageUrl = await uploadImage(file as File)
+
             const payload = {
                 ...formData,
-                fee : parseInt(formData.fee),
-                image : file,
-                email : session?.user?.email
+                fee: parseInt(formData.fee),
+                image: imageUrl,
+                email: session?.user?.email
             }
 
-            const response = await axios.post(
-                `${process.env.NEXT_PUBLIC_BACKEND_URL}/doctor/hospital/create`,
-                payload,
-                {
-                    headers: { 'Content-Type': 'multipart/form-data' },
-                }
-            );
+            console.log(payload)
+
+            const response = await axios.post(`${process.env.NEXT_PUBLIC_BACKEND_URL}/doctor/hospital/create`, payload);
 
             if (response.status === 200) {
                 toast({
