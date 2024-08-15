@@ -1,21 +1,21 @@
 'use client'
 
-import { Doctor } from "@/types/DoctorVerificationFormDataType"
+import { DoctorInformation } from "@/types/DoctorVerificationFormDataType"
 import axios from "axios";
 import { useSession } from "next-auth/react";
 import { createContext, useCallback, useContext, useEffect, useState } from "react";
 
 interface Props {
-    doctor: Doctor | null,
+    doctor: DoctorInformation | null,
     updateDoc: () => void;
-    status : number | undefined;
+    status: number | undefined;
 }
 
 const DoctorContext = createContext<Props | null>(null)
 
 export const DoctorProvider = ({ children }: { children: React.ReactNode }) => {
 
-    const [doctor, setDoctor] = useState<Doctor | null>(null)
+    const [doctor, setDoctor] = useState<DoctorInformation | null>(null)
     const [status, setStatus] = useState<number>()
     const { data: session } = useSession()
 
