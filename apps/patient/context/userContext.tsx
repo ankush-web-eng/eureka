@@ -48,7 +48,7 @@ const UserProvider = ({ children }: { children: ReactNode }) => {
   const updatePatient = () => {
     fetchUser();
   }
-
+  
   return (
     <UserContext.Provider value={{ userDetails, selectedCity, setSelectedCity, updatePatient }}>
       {children}
@@ -56,7 +56,7 @@ const UserProvider = ({ children }: { children: ReactNode }) => {
   );
 };
 
-const useUser = () => {
+ function useUser (): any {
   const context = useContext(UserContext);
   if (!context) {
     throw new Error("useUser must be used within a UserProvider");

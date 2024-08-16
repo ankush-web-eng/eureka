@@ -21,7 +21,7 @@ export default function AppointmentCard({ appointment }: { appointment: any }) {
                         Dr. {appointment.doctor.name}
                     </h1>
                     <h2 className="text-gray-600 mb-1">
-                        {appointment.doctor.hospital}
+                        {appointment.doctor.hospital.name}
                     </h2>
                     <p className="text-sm bg-blue-100 text-blue-800 px-3 py-1 rounded-full inline-block mb-2">
                         {appointment.doctor.city}
