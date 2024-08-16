@@ -1,13 +1,14 @@
 'use client';
 import Image from 'next/image';
 import axios from 'axios';
-import React, { useState, ChangeEvent, FormEvent, useRef } from 'react';
+import React, { useState, ChangeEvent, FormEvent, useRef, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { useSession } from 'next-auth/react';
 import { RiLoaderLine } from 'react-icons/ri';
 import { FaPencilAlt } from 'react-icons/fa';
 import { LuLoader } from 'react-icons/lu';
 import { useToast } from '@/components/ui/use-toast';
+import { useDoctor } from '@/context/DoctorProvider';
 
 const weekdays = [
     { name: 'Sunday', value: 0 },
@@ -23,6 +24,7 @@ const HospitalDetailsForm = () => {
     const router = useRouter();
     const { data: session } = useSession();
     const { toast } = useToast();
+    const { doctor, updateDoc } = useDoctor();
 
     const [loading, setLoading] = useState(false);
     const [file, setFile] = useState<File | null>(null);
@@ -40,6 +42,27 @@ const HospitalDetailsForm = () => {
         availableDays: [] as number[],
         diseases: [] as string[],
     });
+
+    const isInitialMount = useRef(true);
+
+    useEffect(() => {
+        updateDoc();
+    }, [updateDoc]);
+
+    useEffect(() => {
+        if (isInitialMount.current && doctor) {
+            setFormData({
+                name: doctor.hospital.name || '',
+                city: doctor.hospital.city || '',
+                fee: doctor.hospital.fee.toString(),
+                address: doctor.hospital.address || '',
+                availableDays: doctor.hospital.availableDays || [],
+                diseases: doctor.hospital.diseases || [],
+            });
+            setImageSrc(doctor.image || null);
+            isInitialMount.current = false;
+        }
+    }, [doctor]);
 
     const handleClick = () => {
         if (imageRef.current) {

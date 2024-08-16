@@ -12,10 +12,15 @@ export interface DoctorInformation extends Doctor {
   availableTimes: TimeSlot[];
   hospital: Hospital;
   appointments: Appointment[];
-  history: Appointment[];
+  history: History[];
 }
 
-interface Hospital {
+export interface TimeSlot {
+  startTime: Date;
+  endTime: Date;
+}
+
+export interface Hospital {
   id: string;
   name: string
   city: string
@@ -26,9 +31,20 @@ interface Hospital {
   diseases: string[]
   phones: string[]
 }
-interface Appointment {
+export interface Appointment {
   id: string
   date: Date
+  disease?: string
+  doctorId: string;
+  patientId : string;
+  isApproved : boolean;
+}
+
+export interface History {
+  id: string
+  date: Date
+  appointmentdate: Date
+  patientId : string;
   disease?: string
   doctorId: string
 }
@@ -37,11 +53,6 @@ export interface FormData {
   email: string;
   name: string;
   phone: string;
-}
-
-export interface TimeSlot {
-  startTime: Date;
-  endTime: Date;
 }
 
 export interface DoctorVerificationPayload extends FormData {

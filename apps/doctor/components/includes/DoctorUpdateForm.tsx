@@ -1,7 +1,7 @@
 'use client'
 import Image from 'next/image';
 import axios from 'axios';
-import React, { useState, ChangeEvent, FormEvent, useRef } from 'react';
+import React, { useState, ChangeEvent, FormEvent, useRef, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { useSession } from 'next-auth/react';
 
@@ -11,11 +11,13 @@ import { LuLoader } from 'react-icons/lu';
 import { useToast } from '@/components/ui/use-toast';
 import TimeSlotPicker from '@/components/extentions/TimePlotPicker';
 import type { TimeSlot, FormData } from '@/types/DoctorVerificationFormDataType';
+import { useDoctor } from '@/context/DoctorProvider';
 
-const DoctorVerificationForm = () => {
+const DoctorUpdateForm = () => {
     const router = useRouter();
     const { data: session } = useSession()
     const { toast } = useToast()
+    const { doctor, updateDoc } = useDoctor();
 
     const API_PHOTO_UPLOAD = '/api/photoUpload';
 
@@ -28,17 +30,36 @@ const DoctorVerificationForm = () => {
     const [timeSlots, setTimeSlots] = useState<TimeSlot[]>([]);
     const [currentTimeSlot, setCurrentTimeSlot] = useState<TimeSlot>({ startTime: new Date(), endTime: new Date() });
 
-    const handleClick = async () => {
-        if (imageRef.current) {
-            imageRef.current.click();
-        }
-    };
-
     const [formData, setFormData] = useState<FormData>({
         email: '',
         name: '',
         phone: '',
     });
+
+    const isInitialMount = useRef(true);
+
+    useEffect(() => {
+        updateDoc();
+    }, [updateDoc]);
+
+    useEffect(() => {
+        if (isInitialMount.current && doctor) {
+            setFormData({
+                email: doctor.email || '',
+                name: doctor.name || '',
+                phone: doctor.phone || '',
+            });
+            setImageSrc(doctor.image || null);
+            setTimeSlots(doctor.availableTimes || []);
+            isInitialMount.current = false;
+        }
+    }, [doctor]);
+
+    const handleClick = async () => {
+        if (imageRef.current) {
+            imageRef.current.click();
+        }
+    };
 
     const uploadImage = async (file: File): Promise<string> => {
         try {
@@ -86,7 +107,7 @@ const DoctorVerificationForm = () => {
                     duration: 2000
                 })
                 if (window.location.pathname === '/') {
-                    router.replace('/edit/hospital');
+                    router.replace('/edithospital');
                 }
             }
         } catch (error) {
@@ -128,7 +149,7 @@ const DoctorVerificationForm = () => {
     };
 
     const formatTime = (date: Date) => {
-        return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+        return new Date(date).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
     };
 
     const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -191,7 +212,10 @@ const DoctorVerificationForm = () => {
                 });
                 return;
             }
-            const imageUrl = await uploadImage(file as File);
+            let imageUrl = doctor?.image;
+            if (file) {
+                imageUrl = await uploadImage(file);
+            }
             const payload = {
                 ...formData,
                 image: imageUrl,
@@ -213,6 +237,7 @@ const DoctorVerificationForm = () => {
             setLoading(false);
         }
     };
+
 
     return (
         <div className="min-h-screen flex items-center justify-center bg-gray-100 py-12 px-4 sm:px-6 lg:px-8">
@@ -320,4 +345,4 @@ const DoctorVerificationForm = () => {
 
 };
 
-export default DoctorVerificationForm;
+export default DoctorUpdateForm;

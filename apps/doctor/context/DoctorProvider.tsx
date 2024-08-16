@@ -22,7 +22,7 @@ export const DoctorProvider = ({ children }: { children: React.ReactNode }) => {
     const getDoctor = useCallback(async () => {
         try {
             const res = await axios.get(`${process.env.NEXT_PUBLIC_BACKEND_URL}/doctor/user/${session?.user?.email}`)
-            setDoctor(res.data.user)
+            setDoctor(res.data)
             setStatus(res.status)
         } catch (error) { }
     }, [session])

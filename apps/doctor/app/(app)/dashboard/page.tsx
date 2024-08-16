@@ -1,8 +1,15 @@
+import dynamic from "next/dynamic"
+import { Metadata } from "next"
 
-export default function Page(){
-    return (
-        <div className="flex justify-center items-center h-screen bg-gray-100">
-            <h1>Dashboard</h1>
-        </div>
-    )
+import AppointmentsSkeleton from "@/components/skeleton/AppointmentSkeleton"
+const Appointment = dynamic(() => import("@/components/extentions/Appointments"), {ssr: false, loading: () => <AppointmentsSkeleton />})
+
+export const metadata: Metadata = {
+    title: "Dashboard",
+    description: "Dashboard",
+    keywords: "Dashboard",
+}
+
+export default function Page() {
+    return <Appointment />
 }
