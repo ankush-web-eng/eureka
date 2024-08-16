@@ -1,5 +1,7 @@
+import dynamic from "next/dynamic";
 import { Metadata } from "next";
-import Appointments from "./appointments";
+
+const Appointments = dynamic(() => import("./appointments"));
 
 export const metadata: Metadata = {
     title: "Appointments",
@@ -8,7 +10,5 @@ export const metadata: Metadata = {
 }
 
 export default function Page() {
-    return (
-        <Appointments />
-    )
+    return <Appointments />
 }

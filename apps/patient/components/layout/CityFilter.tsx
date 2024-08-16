@@ -3,15 +3,14 @@
 import { useEffect, useState, FormEvent } from 'react';
 import axios from 'axios';
 import { useUser } from '@/context/userContext';
+import { LuLoader } from "react-icons/lu";
 
 interface City {
     city: string;
 }
 
 export default function CityFilter() {
-
     const { selectedCity, setSelectedCity } = useUser();
-
     const [cities, setCities] = useState<City[]>([]);
     const [city, setCity] = useState<string>(selectedCity);
     const [loading, setLoading] = useState<boolean>(true);
@@ -31,21 +30,28 @@ export default function CityFilter() {
             setLoading(false);
         }
     };
+
     useEffect(() => {
         fetchCities();
     }, []);
 
-
     return (
-        <div className="h-fit py-3 flex justify-center items-center bg-inherit">
-            <form className='space-x-2' >
+        <div className="w-full max-w-md">
+            <label htmlFor="city" className="block text-sm font-medium text-gray-700 mb-2">
+                Select City
+            </label>
+            {loading ? (
+                <div className="flex items-center justify-center h-10">
+                    <LuLoader className="animate-spin" size={20} color="gray" />
+                </div>
+            ) : (
                 <select
                     name="city"
                     id="city"
                     value={city}
                     onChange={handleCityChange}
                     required
-                    className='border py-3 rounded-2xl px-2'
+                    className="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm p-2"
                 >
                     <option value="" disabled>Select your city</option>
                     {cities.map((city, index) => (
@@ -54,7 +60,7 @@ export default function CityFilter() {
                         </option>
                     ))}
                 </select>
-            </form>
+            )}
         </div>
     );
 }

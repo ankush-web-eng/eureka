@@ -107,7 +107,7 @@ const DoctorUpdateForm = () => {
                     duration: 2000
                 })
                 if (window.location.pathname === '/') {
-                    router.replace('/edithospital');
+                    router.replace('/edit/hospital');
                 }
             }
         } catch (error) {

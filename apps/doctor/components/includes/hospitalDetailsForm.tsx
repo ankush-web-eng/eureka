@@ -59,7 +59,7 @@ const HospitalDetailsForm = () => {
                 availableDays: doctor.hospital.availableDays || [],
                 diseases: doctor.hospital.diseases || [],
             });
-            setImageSrc(doctor.image || null);
+            setImageSrc(doctor.hospital.image || null);
             isInitialMount.current = false;
         }
     }, [doctor]);
@@ -189,7 +189,7 @@ const HospitalDetailsForm = () => {
                     description: 'Hospital details updated successfully',
                     duration: 2000
                 });
-                router.push('/dashboard');
+                router.refresh();
             } else {
                 toast({
                     title: 'Error',
