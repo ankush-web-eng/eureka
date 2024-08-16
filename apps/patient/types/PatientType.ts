@@ -6,6 +6,27 @@ export interface Doctor {
     isVerified: boolean;
     phone?: string;
     hospitalId?: string;
+    availableTimes: TimeSlot[];
+    hospital: Hospital;
+    appointments: Appointment[];
+    history: History[];
+}
+
+export interface TimeSlot {
+    startTime: Date;
+    endTime: Date;
+}
+
+export interface Hospital {
+    id: string;
+    name: string
+    city: string
+    address: string
+    image: string
+    fee: number
+    availableDays: number[]
+    diseases: string[]
+    phones: string[]
 }
 
 export interface Appointment {

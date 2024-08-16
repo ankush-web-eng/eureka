@@ -16,7 +16,7 @@ const Navbar: React.FC = () => {
         <nav className="fixed z-50 top-5 left-1/2 transform -translate-x-1/2 w-[65%] bg-black text-gray-200 rounded-full px-5 py-3 flex justify-between items-center md:w-2/3 lg:w-[65%]">
             <Link href={'/dashboard'} className="text-gray-200 font-bold">Medzo</Link>
 
-            <div className="hidden md:flex space-x-4">
+            <div className="hidden md:flex space-x-4 items-center">
                 <Link href="/dashboard" className="text-gray-200 hover:text-white">Dashboard</Link>
                 <Link href="/edit/profile" className="text-gray-200 hover:text-white">Profile</Link>
                 <Link href="/edit/hospital" className="text-gray-200 hover:text-white">Edit</Link>

@@ -1,8 +1,14 @@
-'use client'
-import { HistoryCard } from "@/components/HistoryCard";
+import { Metadata } from "next";
+import dynamic from "next/dynamic";
 
-export default function Page(){
-    return (
-        <HistoryCard name="Ankush" age={20} />
-    )
+const HistoryCard = dynamic(() => import("./history"))
+
+export const metadata: Metadata = {
+    title: "History",
+    description: "History of your appointments",
+    keywords: "history, appointments, patient, doctor, hospital"
+}
+
+export default function Page() {
+    return <HistoryCard />
 }

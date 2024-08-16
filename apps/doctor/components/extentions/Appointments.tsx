@@ -19,7 +19,7 @@ export default function Appointments() {
     }
 
     return (
-        <div className="min-h-screen flex items-center justify-center bg-gray-100">
+        <div className="min-h-screen flex items-center justify-center bg-gray-100 mt-4 sm:mt-8 lg:mt-12">
             <div className="bg-white p-8 rounded-lg shadow-md w-full max-w-4xl">
                 <h2 className="text-2xl font-bold mb-6 text-gray-800">Appointments</h2>
                 <div className="space-y-4">

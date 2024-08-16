@@ -56,7 +56,7 @@ const UserProvider = ({ children }: { children: ReactNode }) => {
   );
 };
 
-const useUser = () => {
+function useUser(): UserContextProps {
   const context = useContext(UserContext);
   if (!context) {
     throw new Error("useUser must be used within a UserProvider");
