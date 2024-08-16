@@ -2,6 +2,8 @@
 
 import React, { useState } from 'react';
 import Link from 'next/link';
+import { Button } from '@/components/ui/button';
+import { signOut } from 'next-auth/react';
 
 const Navbar: React.FC = () => {
     const [isOpen, setIsOpen] = useState(false);
@@ -19,6 +21,7 @@ const Navbar: React.FC = () => {
                 <Link href="/edit/profile" className="text-gray-200 hover:text-white">Profile</Link>
                 <Link href="/edit/hospital" className="text-gray-200 hover:text-white">Edit</Link>
                 <Link href="/history" className="text-gray-200 hover:text-white">History</Link>
+                <Button onClick={() => signOut()} variant={'secondary'}>Logout</Button>
             </div>
 
             <div className="md:hidden">
@@ -35,6 +38,7 @@ const Navbar: React.FC = () => {
                     <Link href="/edit/profile" className="block px-4 py-2 text-gray-200 hover:bg-gray-700">Profile</Link>
                     <Link href="/edit/hospital" className="block px-4 py-2 text-gray-200 hover:bg-gray-700">Edit</Link>
                     <Link href="/history" className="block px-4 py-2 text-gray-200 hover:bg-gray-700">History</Link>
+                    <button onClick={() => signOut()} className="block px-4 py-2 text-gray-200 hover:bg-gray-700" >Logout</button>
                 </div>
             )}
         </nav>

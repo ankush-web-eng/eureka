@@ -1,4 +1,5 @@
 'use client'
+import { Appointment, History } from "@/types/PatientType";
 import axios from "axios";
 import { useSession } from "next-auth/react";
 import { createContext, useCallback, useEffect, useState, ReactNode, useContext } from "react";
@@ -6,16 +7,18 @@ import { createContext, useCallback, useEffect, useState, ReactNode, useContext 
 interface UserDetails {
   id: string;
   email: string;
+  name: string;
   createdAt: string;
   city: string;
-  appointments: any[];
-  history: any[];
+  appointments: Appointment[];
+  history: History[];
 }
 
 interface UserContextProps {
   userDetails: UserDetails | null;
   selectedCity: string;
   setSelectedCity: React.Dispatch<React.SetStateAction<string>>;
+  updatePatient: () => void;
 }
 
 const UserContext = createContext<UserContextProps | null>(null);
@@ -42,8 +45,12 @@ const UserProvider = ({ children }: { children: ReactNode }) => {
     fetchUser();
   }, [fetchUser]);
 
+  const updatePatient = () => {
+    fetchUser();
+  }
+
   return (
-    <UserContext.Provider value={{ userDetails, selectedCity, setSelectedCity }}>
+    <UserContext.Provider value={{ userDetails, selectedCity, setSelectedCity, updatePatient }}>
       {children}
     </UserContext.Provider>
   );

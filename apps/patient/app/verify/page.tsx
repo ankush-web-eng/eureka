@@ -40,7 +40,7 @@ export default function Page() {
         e.preventDefault();
         setSending(true);
         try {
-            const res = await axios.post(`${process.env.NEXT_PUBLIC_BACKEND_URL}/patient/user/create/${session?.user?.email}`, { city: selectedCity });
+            const res = await axios.post(`${process.env.NEXT_PUBLIC_BACKEND_URL}/patient/user/create/${session?.user?.email}`, { city: selectedCity, name : session?.user?.name });
             if (res.status === 200) {
                 router.push('/dashboard');
             }
