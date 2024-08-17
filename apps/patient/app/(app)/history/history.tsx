@@ -1,12 +1,16 @@
 "use client"
 import HistoryCard from "@/components/HistoryCard";
 import { useUser } from "@/context/userContext";
-import { Appointment, Doctor, History } from "@/types/PatientType";
+import { History } from "@/types/PatientType";
+import { useEffect } from "react";
 
 export default function Appointments() {
-    const { userDetails } = useUser();
+    const { userDetails, updatePatient } = useUser();
     const appointments = userDetails?.history;
 
+    useEffect(() => {
+        updatePatient()
+    }, [updatePatient])
 
     return (
         <div className="min-h-screen bg-gray-100 py-12 px-4 sm:px-6 lg:px-8 sm:pt-12 lg:pt-16">

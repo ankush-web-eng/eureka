@@ -2,11 +2,16 @@
 import AppointmentCard from "@/components/AppointmentCard";
 import { useUser } from "@/context/userContext";
 import { Appointment, Doctor } from "@/types/PatientType";
+import { useEffect } from "react";
 
 export default function Appointments() {
 
-    const { userDetails } = useUser();
+    const { userDetails, updatePatient } = useUser();
     const appointments = userDetails?.appointments;
+
+    useEffect(() => {
+        updatePatient();
+    }, [updatePatient]);
 
     return (
         <div className="min-h-screen bg-gray-100 py-12 px-4 sm:px-6 lg:px-8 sm:pt-12 lg:pt-16">

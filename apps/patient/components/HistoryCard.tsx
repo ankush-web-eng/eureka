@@ -1,4 +1,4 @@
-import { Appointment, History } from "@/types/PatientType";
+import { History } from "@/types/PatientType";
 import Image from "next/image";
 
 export default function HistoryCard({ history }: { history: History }) {
