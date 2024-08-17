@@ -7,7 +7,7 @@ import { redirect, useRouter } from 'next/navigation'
 import { useEffect, useState } from 'react'
 
 import { LuLoader } from 'react-icons/lu'
-import { useToast } from '../ui/use-toast'
+import { useToast } from '@/components/ui/use-toast'
 
 const SignUp = () => {
     const [email, setEmail] = useState<string>('')
@@ -33,7 +33,6 @@ const SignUp = () => {
             })
             if (res.status === 200) {
                 setRegistered(true)
-                // router.push('/api/auth/signin')
             }
             setLoading(false)
             setEmail('')
