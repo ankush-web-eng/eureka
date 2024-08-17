@@ -10,7 +10,7 @@ import DoctorCardSkeleton from "@/components/skeleton/DoctorCardsSkeleton";
 import CitySelectorSkeleton from "@/components/skeleton/citySelectorSkeleton";
 
 const DoctorCard = dynamic(() => import("@/components/DoctorCard"), { ssr: false, loading: () => <DoctorCardSkeleton /> });
-const CityFilter = dynamic(() => import("@/components/layout/CityFilter"), { ssr: false, loading: () => <CitySelectorSkeleton /> });
+const CityDialog = dynamic(() => import("@/components/layout/CityDialog"), { ssr: false });
 
 export default function Doctors() {
     const { selectedCity } = useUser();
@@ -54,7 +54,7 @@ export default function Doctors() {
         <div className="min-h-screen bg-gray-100 py-12 px-4 sm:px-6 lg:px-8 sm:pt-12 lg:pt-16">
             <div className="max-w-7xl mx-auto">
                 <div className="flex justify-between items-center w-full mb-8 mt-4">
-                    <CityFilter />
+                    <CityDialog />
                 </div>
                 <h2 className="text-3xl font-extrabold text-gray-900 mb-8">Nearby Doctors</h2>
                 <div className="grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-3">
