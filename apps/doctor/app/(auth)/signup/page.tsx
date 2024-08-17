@@ -1,13 +1,14 @@
-import SignUp from "@/components/includes/signup";
+import dynamic from "next/dynamic";
 import { Metadata } from "next";
 
-export const metadata : Metadata = {
-    title : "Sign Up",
-    description : "Sign up to create an account"
+import { SignUpSkeleton } from "@/components/skeleton/SignUpSkeleton";
+const SignUp = dynamic(() => import("@/components/includes/signup"), { loading: () => <SignUpSkeleton /> });
+
+export const metadata: Metadata = {
+    title: "Sign Up",
+    description: "Sign up to create an account"
 }
 
-export default function Page(){
-    return (
-        <div><SignUp /></div>
-    )
+export default function Page() {
+    return <SignUp />
 }

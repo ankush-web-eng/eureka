@@ -14,7 +14,6 @@ export const authOptions: NextAuthOptions = {
       async authorize(credentials: any): Promise<any> {
         try {
           const response = await axios.post(`${process.env.NEXT_PUBLIC_BACKEND_URL}/doctor/signin`, { email: credentials.email, password: credentials.password });
-          console.log(response.data)
           if (response.status !== 200) {
             throw new Error(response.data.message);
           } else {

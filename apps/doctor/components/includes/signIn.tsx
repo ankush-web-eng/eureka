@@ -81,7 +81,10 @@ export default function SignIn() {
                     >
                         {loading ? <LuLoader className='animate-spin' color='gray' size={20} /> : "Sign In"}
                     </button>
-                    <Link className='text-center p-2 block text-blue-500 text-sm' href="/signup">Don&apos;t have an account?</Link>
+                    <div>
+                    <Link className='text-center px-2 block text-gray-500 text-sm hover:text-gray-700' href="/reset">Forgot Password</Link>
+                    <Link className='text-center px-2 block text-blue-500 text-sm hover:text-sky-700' href="/signup">Don&apos;t have an account?</Link>
+                    </div>
                 </form>
             </div>
         </div>

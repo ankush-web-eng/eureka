@@ -1,44 +1,46 @@
+import { Skeleton } from "@/components/ui/skeleton";
+
 const DoctorVerificationFormSkeleton = () => {
     return (
         <div className="min-h-screen flex items-center justify-center bg-gray-100 py-12 px-4 sm:px-6 lg:px-8">
             <div className="max-w-4xl w-full space-y-8 bg-white p-10 rounded-xl shadow-md">
-                <div className="h-8 bg-gray-200 rounded w-3/4 mx-auto mb-8"></div>
+                <Skeleton className="h-8 bg-gray-200 rounded w-3/4 mx-auto mb-8"></Skeleton>
 
                 <div className="space-y-6">
                     <div className="grid grid-cols-2 gap-6">
                         {[0, 1].map((index) => (
                             <div key={index}>
-                                <div className="h-4 bg-gray-200 rounded w-1/4 mb-1"></div>
-                                <div className="h-10 bg-gray-200 rounded w-full"></div>
+                                <Skeleton className="h-4 bg-gray-200 rounded w-1/4 mb-1"></Skeleton>
+                                <Skeleton className="h-10 bg-gray-200 rounded w-full"></Skeleton>
                             </div>
                         ))}
                     </div>
 
                     <div>
-                        <div className="h-4 bg-gray-200 rounded w-1/4 mb-1"></div>
+                        <Skeleton className="h-4 bg-gray-200 rounded w-1/4 mb-1"></Skeleton>
                         <div className="flex items-center space-x-3">
-                            <div className="h-10 bg-gray-200 rounded w-full"></div>
-                            <div className="h-10 w-10 bg-gray-200 rounded-md"></div>
+                            <Skeleton className="h-10 bg-gray-200 rounded w-full"></Skeleton>
+                            <Skeleton className="h-10 w-10 bg-gray-200 rounded-md"></Skeleton>
                         </div>
                     </div>
 
                     <div>
-                        <div className="h-4 bg-gray-200 rounded w-1/4 mb-1"></div>
+                        <Skeleton className="h-4 bg-gray-200 rounded w-1/4 mb-1"></Skeleton>
                         <div className="flex flex-wrap gap-2 mt-1">
                             {[0, 1, 2].map((index) => (
-                                <div key={index} className="h-6 w-24 bg-gray-200 rounded-full"></div>
+                                <Skeleton key={index} className="h-6 w-24 bg-gray-200 rounded-full"></Skeleton>
                             ))}
                         </div>
                     </div>
 
                     <div className="flex items-center space-x-6">
                         <div className="relative h-24 w-24">
-                            <div className="h-24 w-24 bg-gray-200 rounded-full"></div>
+                            <Skeleton className="h-24 w-24 bg-gray-200 rounded-full"></Skeleton>
                         </div>
-                        <div className="h-4 bg-gray-200 rounded w-1/3"></div>
+                        <Skeleton className="h-4 bg-gray-200 rounded w-1/3"></Skeleton>
                     </div>
 
-                    <div className="h-10 bg-gray-200 rounded w-full"></div>
+                    <Skeleton className="h-10 bg-gray-200 rounded w-full"></Skeleton>
                 </div>
             </div>
         </div>

@@ -115,7 +115,7 @@ const SignUp = () => {
                         >
                             {loading ? <LuLoader className='animate-spin' color='gray' size={20} /> : "Register"}
                         </button>
-                        <Link className='text-center p-2 block text-blue-500 text-sm' href="/api/auth/signin">Already registered?</Link>
+                        <Link className='text-center p-2 block text-blue-500 text-sm' href="/signin">Already registered?</Link>
                     </form>
                 </div>
             </div>
