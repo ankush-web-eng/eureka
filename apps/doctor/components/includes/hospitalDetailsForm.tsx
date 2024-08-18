@@ -32,6 +32,7 @@ const HospitalDetailsForm = () => {
     const [file, setFile] = useState<File | null>(null);
     const [response, setResponse] = useState<boolean>(false);
     const [imageSrc, setImageSrc] = useState<string | ArrayBuffer | null>(null);
+    const [hostpitalId, setHostpitalId] = useState<string | null>(null);
     const imageRef = useRef<HTMLInputElement>(null);
 
     const API_PHOTO_UPLOAD = '/api/photoUpload';
@@ -72,6 +73,7 @@ const HospitalDetailsForm = () => {
             });
             setImageSrc(doctor.hospital.image || null);
             isInitialMount.current = false;
+            setHostpitalId(doctor.hospital.id);
         }
     }, [doctor]);
 
@@ -242,7 +244,8 @@ const HospitalDetailsForm = () => {
                 ...formData,
                 fee: parseInt(formData.fee),
                 image: imageUrl,
-                email: session?.user?.email
+                email: session?.user?.email,
+                id : hostpitalId
             }
 
             const response = await axios.post(`${process.env.NEXT_PUBLIC_BACKEND_URL}/doctor/hospital/create`, payload);
