@@ -1,7 +1,7 @@
 'use client';
 import Image from 'next/image';
 import axios from 'axios';
-import React, { useState, ChangeEvent, FormEvent, useRef, useEffect } from 'react';
+import React, { useState, ChangeEvent, FormEvent, useRef, useEffect, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
 import { useSession } from 'next-auth/react';
 import { RiLoaderLine } from 'react-icons/ri';
@@ -9,7 +9,8 @@ import { FaPencilAlt } from 'react-icons/fa';
 import { LuLoader } from 'react-icons/lu';
 import { useToast } from '@/components/ui/use-toast';
 import { useDoctor } from '@/context/DoctorProvider';
-import { City, State, Country } from '@/types/CityType';
+import { debounce } from 'lodash';
+import { City, State, Country, Address } from '@/types/CityType';
 
 const weekdays = [
     { name: 'Sunday', value: 0 },
@@ -49,6 +50,8 @@ const HospitalDetailsForm = () => {
     const [cities, setCities] = useState<City[]>([]);
     const [selectedCountry, setSelectedCountry] = useState<Country | null>(null);
     const [selectedState, setSelectedState] = useState<State | null>(null);
+    const [address, setAddress] = useState<Address[] | null>(null);
+    const [addressSuggestions, setAddressSuggestions] = useState<string[]>([]);
 
     const isInitialMount = useRef(true);
 
@@ -120,6 +123,23 @@ const HospitalDetailsForm = () => {
         }
     };
 
+    const debouncedFetchAddress = useCallback(
+        debounce(async (input: string) => {
+            if (input.length > 6) {
+                try {
+                    const response = await axios.get(`${process.env.NEXT_PUBLIC_LOCATION_API_URL}?key=${process.env.NEXT_PUBLIC_LOCATION_API_KEY}&q=${input}`);
+                    setAddressSuggestions(response.data.map((item: Address) => item.display_name));
+                } catch (error) {
+                    console.error('Error fetching address suggestions:', error);
+                }
+            } else {
+                setAddressSuggestions([]);
+            }
+        }, 300), // 300ms delay
+        []
+    );
+
+
     const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         const selectedFile = event.target.files?.[0];
         if (!selectedFile) return;
@@ -188,6 +208,10 @@ const HospitalDetailsForm = () => {
     const handleChange = (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
         const { name, value } = e.target;
         setFormData(prevState => ({ ...prevState, [name]: value }));
+
+        if (name === 'address') {
+            debouncedFetchAddress(value);
+        }
     };
 
     const handleDiseases = (e: ChangeEvent<HTMLInputElement>) => {
@@ -209,18 +233,10 @@ const HospitalDetailsForm = () => {
         e.preventDefault();
         setLoading(true);
         try {
-            if (!file) {
-                toast({
-                    title: 'Error',
-                    description: 'Please upload a hospital image',
-                    duration: 2000,
-                    variant: 'destructive'
-                });
-                setLoading(false);
-                return;
+            let imageUrl = doctor?.image;
+            if (file) {
+                imageUrl = await uploadImage(file);
             }
-
-            const imageUrl = await uploadImage(file as File)
 
             const payload = {
                 ...formData,
@@ -228,8 +244,6 @@ const HospitalDetailsForm = () => {
                 image: imageUrl,
                 email: session?.user?.email
             }
-
-            console.log(payload)
 
             const response = await axios.post(`${process.env.NEXT_PUBLIC_BACKEND_URL}/doctor/hospital/create`, payload);
 
@@ -350,9 +364,10 @@ const HospitalDetailsForm = () => {
                             ))}
                         </select>
                     </div>
+
                     <div>
                         <label htmlFor="address" className="block text-sm font-medium text-gray-700 mb-1">Address</label>
-                        <textarea
+                        <input
                             id="address"
                             name="address"
                             placeholder="Address"
@@ -360,8 +375,13 @@ const HospitalDetailsForm = () => {
                             onChange={handleChange}
                             required
                             className="appearance-none rounded-md relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
-                            rows={3}
+                            list="addressSuggestions"
                         />
+                        <datalist id="addressSuggestions">
+                            {addressSuggestions.map((suggestion, index) => (
+                                <option key={index} value={suggestion} />
+                            ))}
+                        </datalist>
                     </div>
                     <div>
                         <label htmlFor="diseases" className="block text-sm font-medium text-gray-700 mb-1">Diseases</label>

@@ -169,7 +169,7 @@ const DoctorUpdateForm = () => {
             return;
         }
 
-        if (selectedFile.size > 2 * 1024 * 1024) {
+        if (selectedFile.size > 1024 * 1024) {
             toast({
                 title: 'Error',
                 description: 'File size should be less than 2MB',
@@ -328,7 +328,7 @@ const DoctorUpdateForm = () => {
                             accept="image/*"
                             onChange={handleFileChange}
                         />
-                        <p className="text-sm text-gray-500">Upload a profile picture (Max 2MB)</p>
+                        <p className="text-sm text-gray-500">Upload a profile picture (Max 1MB)</p>
                     </div>
                     <div>
                         <button
