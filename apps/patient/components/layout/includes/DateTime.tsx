@@ -1,16 +1,28 @@
 import React, { useState, useEffect } from 'react';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
-import { Doctor } from '@/components/DoctorCard'; // Assuming you have a Doctor type defined here
+import { FormattedDoctors } from '@/types/PatientType';
 
 interface DateTimePickerProps {
     onDateTimeChange: (date: Date | null) => void;
-    doctor: Doctor;
+    doctor: FormattedDoctors;
 }
 
 const DateTimePicker: React.FC<DateTimePickerProps> = ({ onDateTimeChange, doctor }) => {
     const [selectedDate, setSelectedDate] = useState<Date | null>(null);
-    const [availableTimes, setAvailableTimes] = useState<{ startTime: Date, endTime: Date }[]>([]);
+    const [availableTimes, setAvailableTimes] = useState<Date[]>([]);
+
+    // useEffect(() => {
+    //     if (selectedDate) {
+    //         const availableTimesForDate = doctor.availableTimes.filter(slot => {
+    //             const slotDate = new Date(slot.startTime);
+    //             return slotDate.toDateString() === selectedDate.toDateString();
+    //         });
+            
+    //         const times = availableTimesForDate.map(slot => new Date(slot.startTime));
+    //         setAvailableTimes(times);
+    //     }
+    // }, [selectedDate, doctor.availableTimes]);
 
     const handleDateChange = (date: Date | null) => {
         setSelectedDate(date);
@@ -23,12 +35,9 @@ const DateTimePicker: React.FC<DateTimePickerProps> = ({ onDateTimeChange, docto
     };
 
     const filterTime = (time: Date) => {
-        const timeInMilliseconds = time.getTime();
-        return doctor.availableTimes.some(slot => {
-            const slotStart = new Date(slot.startTime).getTime();
-            const slotEnd = new Date(slot.endTime).getTime();
-            return timeInMilliseconds >= slotStart && timeInMilliseconds <= slotEnd;
-        });
+        return availableTimes.some(availableTime => 
+            time.getTime() === availableTime.getTime()
+        );
     };
 
     const maxDate = new Date();
@@ -43,13 +52,14 @@ const DateTimePicker: React.FC<DateTimePickerProps> = ({ onDateTimeChange, docto
                 placeholderText='Select a slot'
                 showTimeSelect
                 timeFormat="HH:mm"
-                timeIntervals={30} // Smaller interval to better test the filter
+                timeIntervals={30}
                 minDate={new Date()}
                 maxDate={maxDate}
                 filterDate={filterDate}
-                filterTime={filterTime}
+                // filterTime={filterTime}
                 dateFormat="MMMM d, yyyy h:mm aa"
                 timeCaption="time"
+                // includeTimes={availableTimes}
             />
         </div>
     );

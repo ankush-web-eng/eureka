@@ -1,7 +1,7 @@
 'use client'
 import Image from 'next/image';
 import axios from 'axios';
-import React, { useState, ChangeEvent, FormEvent, useRef, useEffect } from 'react';
+import React, { useState, ChangeEvent, FormEvent, useRef, useEffect, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
 import { useSession } from 'next-auth/react';
 
@@ -12,6 +12,7 @@ import { useToast } from '@/components/ui/use-toast';
 import TimeSlotPicker from '@/components/extentions/TimePlotPicker';
 import type { TimeSlot, FormData } from '@/types/DoctorVerificationFormDataType';
 import { useDoctor } from '@/context/DoctorProvider';
+import { debounce } from 'lodash';
 
 const DoctorUpdateForm = () => {
     const router = useRouter();
@@ -60,6 +61,13 @@ const DoctorUpdateForm = () => {
             imageRef.current.click();
         }
     };
+
+    const debouncedSetTimeSlots = useCallback(
+        debounce((newTimeSlots: TimeSlot[]) => {
+            setTimeSlots(newTimeSlots);
+        }, 300),
+        []
+    );
 
     const uploadImage = async (file: File): Promise<string> => {
         try {
@@ -144,8 +152,11 @@ const DoctorUpdateForm = () => {
         }
     };
 
-    const removeTimeSlot = (index: number) => {
-        setTimeSlots(timeSlots.filter((_, i) => i !== index));
+    const removeTimeSlot = (index: number, event: React.MouseEvent) => {
+        event.preventDefault();
+        event.stopPropagation();
+        const newTimeSlots = timeSlots.filter((_, i) => i !== index);
+        debouncedSetTimeSlots(newTimeSlots);
     };
 
     const formatTime = (date: Date) => {
@@ -202,7 +213,7 @@ const DoctorUpdateForm = () => {
         e.preventDefault();
         setLoading(true);
         try {
-            validateForm(file);
+            // validateForm(file);
             if (timeSlots.length === 0) {
                 toast({
                     title: 'Error',
@@ -287,7 +298,7 @@ const DoctorUpdateForm = () => {
                                 {timeSlots.map((slot, index) => (
                                     <span key={index} className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-indigo-100 text-indigo-800">
                                         {`${formatTime(slot.startTime)} - ${formatTime(slot.endTime)}`}
-                                        <button onClick={() => removeTimeSlot(index)} className="ml-1 text-indigo-600 hover:text-indigo-800">
+                                        <button type='button' onClick={(e) => removeTimeSlot(index, e)} className="ml-1 text-indigo-600 hover:text-indigo-800">
                                             ×
                                         </button>
                                     </span>

@@ -1,6 +1,7 @@
 
 import DoctorCardSkeleton from "@/components/skeleton/DoctorCardsSkeleton";
 import CitySelectorSkeleton from "@/components/skeleton/citySelectorSkeleton";
+import { Skeleton } from "@/components/ui/skeleton";
 
 export default function DoctorsPageSkeleton() {
     return (
@@ -9,7 +10,7 @@ export default function DoctorsPageSkeleton() {
                 <div className="flex justify-between items-center w-full mb-8">
                     <CitySelectorSkeleton />
                 </div>
-                <div className="h-10 bg-gray-200 rounded w-1/2 mb-8"></div>
+                <Skeleton className="h-10 bg-gray-200 rounded w-1/2 mb-8"></Skeleton>
                 <div className="grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-3">
                     {Array(6).fill(0).map((_, index) => (
                         <DoctorCardSkeleton key={index} />

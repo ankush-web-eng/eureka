@@ -3,32 +3,31 @@ import { useUser } from "@/context/userContext";
 import axios from "axios";
 import dynamic from "next/dynamic";
 import { useCallback, useEffect, useState } from "react";
-import { Doctor } from "@/components/DoctorCard";
+import { Doctor, FormattedDoctors, Hospital } from "@/types/PatientType";
 
 import DoctorsPageSkeleton from "@/components/skeleton/DoctorPageSkeleton";
 import DoctorCardSkeleton from "@/components/skeleton/DoctorCardsSkeleton";
-import CitySelectorSkeleton from "@/components/skeleton/citySelectorSkeleton";
 
-const DoctorCard = dynamic(() => import("@/components/DoctorCard"), { ssr: false, loading: () => <DoctorCardSkeleton /> });
+const DoctorCard = dynamic(() => import("@/components/DoctorCard"), { ssr: false, loading: () => <DoctorsPageSkeleton /> });
 const CityDialog = dynamic(() => import("@/components/layout/CityDialog"), { ssr: false });
 
 export default function Doctors() {
     const { selectedCity } = useUser();
-    const [doctors, setDoctors] = useState<Doctor[]>([]);
+    const [doctors, setDoctors] = useState<FormattedDoctors[]>([]);
     const [loading, setLoading] = useState(true);
 
     const getDoctors = useCallback(async () => {
         setLoading(true);
         try {
             const response = await axios.get<any[]>(`${process.env.NEXT_PUBLIC_BACKEND_URL}/patient/doctors?city=${selectedCity}`);
-            const formattedDoctors = response.data.map(item => ({
+            const formattedDoctors = response.data.map((item : Hospital) => ({
                 id: item.doctor?.id || item.id,
                 email: item.doctor?.email || '',
                 name: item.doctor?.name || '',
                 hospital: item.name,
                 city: item.city,
                 address: item.address,
-                profile: item.doctor?.image || item.image,
+                image: item.doctor?.image || item.image,
                 phone: item.doctor?.phone || '',
                 fee: item.fee,
                 availableDays: item.availableDays,

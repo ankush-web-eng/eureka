@@ -16,29 +16,9 @@ import {
     DrawerTrigger,
 } from "@/components/ui/drawer"
 import DateTimePicker from './layout/includes/DateTime';
+import { Doctor, FormattedDoctors } from '@/types/PatientType';
 
-export interface TimeSlot {
-    id: string;
-    startTime: Date;
-    endTime: Date;
-}
-
-export interface Doctor {
-    id: string;
-    email: string;
-    name: string;
-    hospital: string;
-    city: string;
-    address: string;
-    profile: string;
-    phone: string;
-    fee: number;
-    availableDays: number[];
-    availableTimes: TimeSlot[];
-    diseases: string[];
-}
-
-export default function DoctorCard({ doctor }: { doctor: Doctor }) {
+export default function DoctorCard({ doctor }: { doctor: FormattedDoctors }) {
     const [loading, setLoading] = useState<boolean>(false);
     const { data: session } = useSession();
     const { toast } = useToast()
@@ -91,7 +71,7 @@ export default function DoctorCard({ doctor }: { doctor: Doctor }) {
             <div className="flex items-start space-x-4">
                 <div className="relative w-24 h-24 flex-shrink-0">
                     <Image
-                        src={doctor.profile}
+                        src={doctor?.image || ""}
                         alt={`Dr. ${doctor.name}`}
                         layout="fill"
                         objectFit="cover"
@@ -133,8 +113,8 @@ export default function DoctorCard({ doctor }: { doctor: Doctor }) {
                     Available Time Slots
                 </h3>
                 <div className="flex flex-wrap gap-2">
-                    {doctor.availableTimes.map((slot) => (
-                        <span key={slot.id} className="bg-gray-100 text-gray-800 text-xs font-medium px-2.5 py-0.5 rounded">
+                    {doctor.availableTimes.map((slot, index : React.Key) => (
+                        <span key={index} className="bg-gray-100 text-gray-800 text-xs font-medium px-2.5 py-0.5 rounded">
                             {new Date(slot.startTime).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})} - {new Date(slot.endTime).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}
                         </span>
                     ))}

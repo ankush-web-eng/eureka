@@ -27,6 +27,7 @@ export interface Hospital {
     availableDays: number[]
     diseases: string[]
     phones: string[]
+    doctor: Doctor;
 }
 
 export interface Appointment {
@@ -57,3 +58,18 @@ export interface Patient {
     email: string;
     city: string;
 }
+
+export interface FormattedDoctors {
+    id: string;
+    email: string;
+    name: string;
+    hospital: string;
+    city: string;
+    address: string;
+    image: string;
+    phone: string;
+    fee: number;
+    availableDays: number[];
+    availableTimes: TimeSlot[];
+    diseases: string[];
+}[]

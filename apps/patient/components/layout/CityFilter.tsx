@@ -73,24 +73,20 @@ export default function CityFilter() {
 
     const handleSubmit = async (e: FormEvent) => {
         e.preventDefault();
-        if (window.location.pathname === "/verify") {
-            setSending(true);
-            try {
-                const res = await axios.post(`${process.env.NEXT_PUBLIC_BACKEND_URL}/patient/user/create/${session?.user?.email}`, { city: selectedCurrentCity, name: session?.user?.name });
-                toast({
-                    title: 'City submitted successfully',
-                    description: 'You will be redirected to the dashboard shortly',
-                })
-                if (res.status === 200) {
-                    router.push('/dashboard');
-                }
-            } catch (error) {
-                console.error('Error submitting city:', error);
-            } finally {
-                setSending(false);
+        setSending(true);
+        try {
+            const res = await axios.post(`${process.env.NEXT_PUBLIC_BACKEND_URL}/patient/user/create/${session?.user?.email}`, { city: selectedCurrentCity, name: session?.user?.name });
+            toast({
+                title: 'City submitted successfully',
+                description: 'You will be redirected to the dashboard shortly',
+            })
+            if (res.status === 200) {
+                router.push('/dashboard');
             }
-        }
-        else {
+        } catch (error) {
+            console.error('Error submitting city:', error);
+        } finally {
+            setSending(false);
             setSelectedCity(selectedCurrentCity);
         }
     };
