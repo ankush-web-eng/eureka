@@ -12,9 +12,7 @@ export default function Auth() {
     if (email) {
       signOut()
     } else {
-      signIn('google').then(() => {
-        router.push('/verify')
-      })
+      signIn('google');
     }
   }
 
