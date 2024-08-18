@@ -9,6 +9,7 @@ import { FaPencilAlt } from 'react-icons/fa';
 import { LuLoader } from 'react-icons/lu';
 import { useToast } from '@/components/ui/use-toast';
 import { useDoctor } from '@/context/DoctorProvider';
+import { City, State, Country } from '@/types/CityType';
 
 const weekdays = [
     { name: 'Sunday', value: 0 },
@@ -43,10 +44,17 @@ const HospitalDetailsForm = () => {
         diseases: [] as string[],
     });
 
+    const [countries, setCountries] = useState<Country[]>([]);
+    const [states, setStates] = useState<State[]>([]);
+    const [cities, setCities] = useState<City[]>([]);
+    const [selectedCountry, setSelectedCountry] = useState<Country | null>(null);
+    const [selectedState, setSelectedState] = useState<State | null>(null);
+
     const isInitialMount = useRef(true);
 
     useEffect(() => {
         updateDoc();
+        fetchCountries();
     }, [updateDoc]);
 
     useEffect(() => {
@@ -63,6 +71,48 @@ const HospitalDetailsForm = () => {
             isInitialMount.current = false;
         }
     }, [doctor]);
+
+    const fetchCountries = async () => {
+        try {
+            const response = await axios.get<Country[]>(`${process.env.NEXT_PUBLIC_BACKEND_URL}/v1/countries`);
+            setCountries(response.data);
+        } catch (error) {
+            console.error('Error fetching countries:', error);
+        }
+    };
+
+    const fetchStates = async (countryCode: string) => {
+        try {
+            const response = await axios.get<State[]>(`${process.env.NEXT_PUBLIC_BACKEND_URL}/v1/states/?country=${countryCode}`);
+            setStates(response.data);
+        } catch (error) {
+            console.error('Error fetching states:', error);
+        }
+    }
+
+    const fetchCities = async (countryCode: string, stateCode: string) => {
+        try {
+            const response = await axios.get<City[]>(`${process.env.NEXT_PUBLIC_BACKEND_URL}/v1/cities/?country=${countryCode}&state=${stateCode}`);
+            setCities(response.data);
+        } catch (error) {
+            console.error('Error fetching cities:', error);
+        }
+    }
+
+    useEffect(() => {
+        if (selectedCountry) {
+            fetchStates(selectedCountry.isoCode);
+            setCities([]);
+            setFormData(prev => ({ ...prev, city: '' }));
+            setSelectedState(null);
+        }
+    }, [selectedCountry])
+
+    useEffect(() => {
+        if (selectedCountry && selectedState) {
+            fetchCities(selectedCountry.isoCode, selectedState.isoCode);
+        }
+    }, [selectedCountry, selectedState])
 
     const handleClick = () => {
         if (imageRef.current) {
@@ -220,7 +270,7 @@ const HospitalDetailsForm = () => {
                 </h2>
                 <form onSubmit={handleSubmit} className="space-y-6">
                     <div className="grid grid-cols-2 gap-6">
-                        {['name', 'city', 'fee'].map((field) => (
+                        {['name', 'fee'].map((field) => (
                             <div key={field}>
                                 <label htmlFor={field} className="block text-sm font-medium text-gray-700 mb-1">
                                     {field.charAt(0).toUpperCase() + field.slice(1)}
@@ -237,6 +287,68 @@ const HospitalDetailsForm = () => {
                                 />
                             </div>
                         ))}
+                    </div>
+                    <div>
+                        <label htmlFor="country" className="block text-sm font-medium text-gray-700 mb-1">
+                            Country
+                        </label>
+                        <select
+                            id="country"
+                            name="country"
+                            value={selectedCountry?.isoCode || ''}
+                            onChange={(e) => setSelectedCountry(countries.find(c => c.isoCode === e.target.value) || null)}
+                            required
+                            className="appearance-none rounded-md relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                        >
+                            <option value="">Select a country</option>
+                            {countries.map((country) => (
+                                <option key={country.isoCode} value={country.isoCode}>
+                                    {country.name}
+                                </option>
+                            ))}
+                        </select>
+                    </div>
+                    <div>
+                        <label htmlFor="state" className="block text-sm font-medium text-gray-700 mb-1">
+                            State
+                        </label>
+                        <select
+                            id="state"
+                            name="state"
+                            value={selectedState?.isoCode || ''}
+                            onChange={(e) => setSelectedState(states.find(s => s.isoCode === e.target.value) || null)}
+                            required
+                            disabled={!selectedCountry}
+                            className="appearance-none rounded-md relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                        >
+                            <option value="">Select a state</option>
+                            {states.map((state) => (
+                                <option key={state.isoCode} value={state.isoCode}>
+                                    {state.name}
+                                </option>
+                            ))}
+                        </select>
+                    </div>
+                    <div>
+                        <label htmlFor="city" className="block text-sm font-medium text-gray-700 mb-1">
+                            City
+                        </label>
+                        <select
+                            id="city"
+                            name="city"
+                            value={formData.city}
+                            onChange={handleChange}
+                            required
+                            disabled={!selectedState}
+                            className="appearance-none rounded-md relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                        >
+                            <option value="">Select a city</option>
+                            {cities.map((city) => (
+                                <option key={city.name} value={city.name}>
+                                    {city.name}
+                                </option>
+                            ))}
+                        </select>
                     </div>
                     <div>
                         <label htmlFor="address" className="block text-sm font-medium text-gray-700 mb-1">Address</label>
