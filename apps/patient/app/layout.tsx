@@ -5,6 +5,7 @@ import { SessionProvider } from "@/context/SessionProvider";
 import { getServerSession } from "next-auth";
 import { Toaster } from "@/components/ui/toaster"
 import { UserProvider } from "@/context/userContext";
+import ReactQueryProvider from "@/context/ReactQueryProvider";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -29,9 +30,11 @@ export default async function RootLayout({
       <body className={inter.className}>
         <SessionProvider session={session}>
           <Toaster />
-          <UserProvider>
-            {children}
-          </UserProvider>
+          <ReactQueryProvider>
+            <UserProvider>
+              {children}
+            </UserProvider>
+          </ReactQueryProvider>
         </SessionProvider>
       </body>
     </html>

@@ -1,51 +1,44 @@
 'use client'
 import { useUser } from "@/context/userContext";
+import { useQuery } from '@tanstack/react-query';
 import axios from "axios";
 import dynamic from "next/dynamic";
-import { useCallback, useEffect, useState } from "react";
 import { Doctor, FormattedDoctors, Hospital } from "@/types/PatientType";
 
 import DoctorsPageSkeleton from "@/components/skeleton/DoctorPageSkeleton";
-import DoctorCardSkeleton from "@/components/skeleton/DoctorCardsSkeleton";
 
 const DoctorCard = dynamic(() => import("@/components/DoctorCard"), { ssr: false, loading: () => <DoctorsPageSkeleton /> });
 const CityDialog = dynamic(() => import("@/components/layout/CityDialog"), { ssr: false });
 
 export default function Doctors() {
     const { selectedCity } = useUser();
-    const [doctors, setDoctors] = useState<FormattedDoctors[]>([]);
-    const [loading, setLoading] = useState(true);
 
-    const getDoctors = useCallback(async () => {
-        setLoading(true);
-        try {
-            const response = await axios.get<any[]>(`${process.env.NEXT_PUBLIC_BACKEND_URL}/patient/doctors?city=${selectedCity}`);
-            const formattedDoctors = response.data.map((item : Hospital) => ({
-                id: item.doctor?.id || item.id,
-                email: item.doctor?.email || '',
-                name: item.doctor?.name || '',
-                hospital: item.name,
-                city: item.city,
-                address: item.address,
-                image: item.doctor?.image || item.image,
-                phone: item.doctor?.phone || '',
-                fee: item.fee,
-                availableDays: item.availableDays,
-                availableTimes: item.doctor?.availableTimes || [],
-                diseases: item.diseases,
-            }));
-            setDoctors(formattedDoctors);
-            setLoading(false)
-        } catch (error) {
-            console.error('Error fetching doctors:', error);
-        }
-    }, [selectedCity]);
+    const fetchDoctors = async () => {
+        const response = await axios.get<Hospital[]>(`${process.env.NEXT_PUBLIC_BACKEND_URL}/patient/doctors?city=${selectedCity}`);
+        return response.data.map((item: Hospital) => ({
+            id: item.doctor?.id || item.id,
+            email: item.doctor?.email || '',
+            name: item.doctor?.name || '',
+            hospital: item.name,
+            city: item.city,
+            address: item.address,
+            image: item.doctor?.image || item.image,
+            phone: item.doctor?.phone || '',
+            fee: item.fee,
+            availableDays: item.availableDays,
+            availableTimes: item.doctor?.availableTimes || [],
+            diseases: item.diseases,
+        }));
+    };
 
-    useEffect(() => {
-        getDoctors();
-    }, [getDoctors]);
+    const { data: doctors = [], isLoading } = useQuery({
+        queryKey: ['doctors', selectedCity],
+        queryFn: fetchDoctors,
+        staleTime: 1000 * 60 * 5,
+    });
 
-    if (loading) {
+
+    if (isLoading) {
         return <DoctorsPageSkeleton />;
     }
 

@@ -28,7 +28,7 @@ const HospitalDetailsForm = () => {
     const { toast } = useToast();
     const { doctor, updateDoc } = useDoctor();
 
-    const [loading, setLoading] = useState(false);
+    const [loading, setLoading] = useState<boolean>(false);
     const [file, setFile] = useState<File | null>(null);
     const [response, setResponse] = useState<boolean>(false);
     const [imageSrc, setImageSrc] = useState<string | ArrayBuffer | null>(null);
@@ -59,7 +59,7 @@ const HospitalDetailsForm = () => {
     useEffect(() => {
         updateDoc();
         fetchCountries();
-    }, [updateDoc]);
+    }, []);
 
     useEffect(() => {
         if (isInitialMount.current && doctor) {
@@ -222,7 +222,7 @@ const HospitalDetailsForm = () => {
     };
 
     const handleWeekdayChange = (e: ChangeEvent<HTMLSelectElement>) => {
-        const selectedDay = parseInt(e.target.value);
+        const selectedDay = parseInt(e.target.value);name
         setFormData(prevState => ({
             ...prevState,
             availableDays: prevState.availableDays.includes(selectedDay)
@@ -245,7 +245,7 @@ const HospitalDetailsForm = () => {
                 fee: parseInt(formData.fee),
                 image: imageUrl,
                 email: session?.user?.email,
-                id : hostpitalId
+                id: hostpitalId
             }
 
             const response = await axios.post(`${process.env.NEXT_PUBLIC_BACKEND_URL}/doctor/hospital/create`, payload);
@@ -318,9 +318,9 @@ const HospitalDetailsForm = () => {
                             className="appearance-none rounded-md relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
                         >
                             <option value="">Select a country</option>
-                            {countries.map((country) => (
+                            {countries?.map((country) => (
                                 <option key={country.isoCode} value={country.isoCode}>
-                                    {country.name}
+                                    {country?.name || ''}
                                 </option>
                             ))}
                         </select>
@@ -339,9 +339,9 @@ const HospitalDetailsForm = () => {
                             className="appearance-none rounded-md relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
                         >
                             <option value="">Select a state</option>
-                            {states.map((state) => (
+                            {states?.map((state) => (
                                 <option key={state.isoCode} value={state.isoCode}>
-                                    {state.name}
+                                    {state?.name || ""}
                                 </option>
                             ))}
                         </select>
@@ -360,9 +360,9 @@ const HospitalDetailsForm = () => {
                             className="appearance-none rounded-md relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
                         >
                             <option value="">Select a city</option>
-                            {cities.map((city) => (
-                                <option key={city.name} value={city.name}>
-                                    {city.name}
+                            {cities?.map((city) => (
+                                <option key={city?.name} value={city?.name}>
+                                    {city?.name || ''}
                                 </option>
                             ))}
                         </select>
@@ -408,9 +408,9 @@ const HospitalDetailsForm = () => {
                             className="appearance-none rounded-md relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
                         >
                             <option value="">Select available days</option>
-                            {weekdays.map((day) => (
+                            {weekdays?.map((day) => (
                                 <option key={day.value} value={day.value}>
-                                    {day.name}
+                                    {day?.name}
                                 </option>
                             ))}
                         </select>
@@ -459,7 +459,7 @@ const HospitalDetailsForm = () => {
                             accept="image/*"
                             onChange={handleFileChange}
                         />
-                        <p className="text-sm text-gray-500">Upload a hospital image (Max 2MB)</p>
+                        <p className="text-sm text-gray-500">Upload a hospital image (Max 1MB)</p>
                     </div>
                     <div>
                         <button
