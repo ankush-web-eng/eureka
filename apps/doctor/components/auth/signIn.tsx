@@ -28,7 +28,7 @@ export default function SignIn() {
         if (result?.error) {
             toast({
                 title: 'Error',
-                description: result.error === 'CredentialsSignin' ? 'Incorrect email or password' : 'An error occurred',
+                description: result.error === 'CredentialsSignin' ? 'Incorrect email or password' : result.error,
                 duration: 2000,
                 variant: 'destructive'
             });
