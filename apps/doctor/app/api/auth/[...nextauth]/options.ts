@@ -21,7 +21,7 @@ export const authOptions: NextAuthOptions = {
             return user;
           }
         } catch (err: any) {
-          throw new Error(err);
+          throw new Error(err.response?.data?.message);
         }
       },
     }),
