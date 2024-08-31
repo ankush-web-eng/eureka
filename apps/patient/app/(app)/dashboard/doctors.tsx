@@ -1,42 +1,59 @@
-'use client'
+'use client';
 import { useUser } from "@/context/userContext";
 import { useQuery } from '@tanstack/react-query';
 import axios from "axios";
 import dynamic from "next/dynamic";
-import { Doctor, FormattedDoctors, Hospital } from "@/types/PatientType";
-
+import { useState } from "react";
+import { Hospital, DoctorsResponse } from "@/types/PatientType";
 import DoctorsPageSkeleton from "@/components/skeleton/DoctorPageSkeleton";
 
 const DoctorCard = dynamic(() => import("@/components/DoctorCard"), { ssr: false, loading: () => <DoctorsPageSkeleton /> });
 const CityDialog = dynamic(() => import("@/components/layout/CityDialog"), { ssr: false });
 
 export default function Doctors() {
+    const [page, setPage] = useState<number>(1);
+    const [limit] = useState<number>(10);
+
     const { selectedCity } = useUser();
 
-    const fetchDoctors = async () => {
-        const response = await axios.get<Hospital[]>(`${process.env.NEXT_PUBLIC_BACKEND_URL}/patient/doctors?city=${selectedCity}`);
-        return response.data.map((item: Hospital) => ({
-            id: item.doctor?.id || item.id,
-            email: item.doctor?.email || '',
-            name: item.doctor?.name || '',
-            hospital: item.name,
-            city: item.city,
-            address: item.address,
-            image: item.doctor?.image || item.image,
-            phone: item.doctor?.phone || '',
-            fee: item.fee,
-            availableDays: item.availableDays,
-            availableTimes: item.doctor?.availableTimes || [],
-            diseases: item.diseases,
-        }));
+    const fetchDoctors = async (page: number, limit: number): Promise<DoctorsResponse> => {
+        const response = await axios.get<DoctorsResponse>(
+            `${process.env.NEXT_PUBLIC_BACKEND_URL}/patient/doctors`,
+            {
+                params: {
+                    city: selectedCity,
+                    page,
+                    limit,
+                },
+            }
+        );
+
+        return {
+            doctors: response.data.doctors.map((item: Hospital) => ({
+                id: item.doctor?.id || item.id,
+                email: item.doctor?.email || '',
+                name: item.doctor?.name || '',
+                hospital: item.name,
+                city: item.city,
+                address: item.address,
+                image: item.doctor?.image || item?.image,
+                phone: item.doctor?.phone || '',
+                fee: item.fee,
+                availableDays: item.availableDays,
+                availableTimes: item.doctor?.availableTimes || [],
+                diseases: item.diseases,
+                phones: item.phones,
+                doctor: item.doctor,
+            })),
+            meta: response.data.meta,
+        };
     };
 
-    const { data: doctors = [], isLoading } = useQuery({
-        queryKey: ['doctors', selectedCity],
-        queryFn: fetchDoctors,
+    const { data = { doctors: [], meta: { totalDoctors: 0, totalPages: 0, currentPage: 1 } }, isLoading } = useQuery({
+        queryKey: ['doctors', selectedCity, page],
+        queryFn: () => fetchDoctors(page, limit),
         staleTime: 1000 * 60 * 5,
     });
-
 
     if (isLoading) {
         return <DoctorsPageSkeleton />;
@@ -50,9 +67,28 @@ export default function Doctors() {
                 </div>
                 <h2 className="text-3xl font-extrabold text-gray-900 mb-8">Nearby Doctors</h2>
                 <div className="grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-3">
-                    {doctors.map((doctor) => (
-                        <DoctorCard key={doctor.id} doctor={doctor} />
-                    ))}
+                    {data.doctors.length > 0 ? data.doctors.map((doctor) => (
+                        <DoctorCard key={doctor.id} doctor={{ email: '', hospital: '', phone: '', availableTimes: [], ...doctor }} />
+                    )) : "No doctors found"}
+                </div>
+                <div className="flex justify-center mt-8">
+                    <button
+                        className="mx-2 px-4 py-2 bg-gray-300 rounded"
+                        onClick={() => setPage((prev) => Math.max(prev - 1, 1))}
+                        disabled={page === 1}
+                    >
+                        Previous
+                    </button>
+                    <span className="mx-2 px-4 py-2 bg-gray-200 rounded">
+                        Page {page} of {data.meta.totalPages}
+                    </span>
+                    <button
+                        className="mx-2 px-4 py-2 bg-gray-300 rounded"
+                        onClick={() => setPage((prev) => prev + 1)}
+                        disabled={page === data.meta.totalPages}
+                    >
+                        Next
+                    </button>
                 </div>
             </div>
         </div>

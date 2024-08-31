@@ -1,3 +1,4 @@
+
 export interface Doctor {
     id: string;
     email: string;
@@ -73,3 +74,14 @@ export interface FormattedDoctors {
     availableTimes: TimeSlot[];
     diseases: string[];
 }[]
+
+export interface MetaData {
+    totalDoctors: number;
+    totalPages: number;
+    currentPage: number;
+}
+
+export interface DoctorsResponse {
+    doctors: Hospital[];
+    meta: MetaData;
+}
