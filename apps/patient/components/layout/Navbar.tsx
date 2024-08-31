@@ -2,7 +2,7 @@
 
 import React, { useState } from 'react';
 import Link from 'next/link';
-import { Button } from '../ui/button';
+import { Button } from '@/components/ui/button';
 import { signOut } from 'next-auth/react';
 
 const Navbar: React.FC = () => {

@@ -1,11 +1,14 @@
 'use client';
-import { useUser } from "@/context/userContext";
-import { useQuery } from '@tanstack/react-query';
 import axios from "axios";
 import dynamic from "next/dynamic";
 import { useState } from "react";
-import { Hospital, DoctorsResponse } from "@/types/PatientType";
+import { useUser } from "@/context/userContext";
+import { useQuery } from '@tanstack/react-query';
+
 import DoctorsPageSkeleton from "@/components/skeleton/DoctorPageSkeleton";
+import { Button } from "@/components/ui/button";
+
+import { Hospital, DoctorsResponse } from "@/types/PatientType";
 
 const DoctorCard = dynamic(() => import("@/components/DoctorCard"), { ssr: false, loading: () => <DoctorsPageSkeleton /> });
 const CityDialog = dynamic(() => import("@/components/layout/CityDialog"), { ssr: false });
@@ -71,24 +74,25 @@ export default function Doctors() {
                         <DoctorCard key={doctor.id} doctor={{ email: '', hospital: '', phone: '', availableTimes: [], ...doctor }} />
                     )) : "No doctors found"}
                 </div>
-                <div className="flex justify-center mt-8">
-                    <button
-                        className="mx-2 px-4 py-2 bg-gray-300 rounded"
+                <div className="flex justify-center mt-8 space-x-2">
+                    <Button
+                        variant={'default'}
                         onClick={() => setPage((prev) => Math.max(prev - 1, 1))}
                         disabled={page === 1}
                     >
                         Previous
-                    </button>
-                    <span className="mx-2 px-4 py-2 bg-gray-200 rounded">
+                    </Button>
+                    <Button
+                        variant={'default'}>
                         Page {page} of {data.meta.totalPages}
-                    </span>
-                    <button
-                        className="mx-2 px-4 py-2 bg-gray-300 rounded"
+                    </Button>
+                    <Button
+                        variant={'default'}
                         onClick={() => setPage((prev) => prev + 1)}
                         disabled={page === data.meta.totalPages}
                     >
                         Next
-                    </button>
+                    </Button>
                 </div>
             </div>
         </div>
