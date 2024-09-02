@@ -1,4 +1,4 @@
-import Auth from "@/components/ui/Auth";
+import LandingPage from "@/components/Home";
 import { Metadata } from "next";
 
 export const metadata: Metadata = {
@@ -7,5 +7,5 @@ export const metadata: Metadata = {
 };
 
 export default function Home() {
-  return <Auth />
+  return <LandingPage />
 }

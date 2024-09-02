@@ -5,8 +5,8 @@ import { Metadata } from "next";
 const Verify = dynamic(() => import("@/components/layout/CityFilter"), { ssr: false, loading: () => <CitySelectorSkeleton /> });
 
 export const metadata: Metadata = {
-    title: "Verify",
-    description: "Verify your city",
+    title: "Select your city",
+    description: "Select your city for personalized experience",
 }
 
 export default function Page() {

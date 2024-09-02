@@ -10,10 +10,10 @@ import { useToast } from '@/components/ui/use-toast';
 import { useUser } from '@/context/userContext';
 
 export default function CityFilter() {
-    const [countries, setCountries] = useState<Country[]>([]);
+    // const [countries, setCountries] = useState<Country[]>([]);
     const [cities, setCities] = useState<City[]>([]);
     const [states, setStates] = useState<State[]>([]);
-    const [selectedCountry, setSelectedCountry] = useState<Country | null>(null);
+    // const [selectedCountry, setSelectedCountry] = useState<Country | null>(null);
     const [selectedState, setSelectedState] = useState<State | null>(null);
     const [selectedCurrentCity, setSelectedCurrentCity] = useState<string>('');
     const [loading, setLoading] = useState<boolean>(true);
@@ -23,16 +23,16 @@ export default function CityFilter() {
     const { data: session } = useSession();
     const { selectedCity, setSelectedCity } = useUser();
 
-    const fetchCountries = async () => {
-        try {
-            const response = await axios.get<Country[]>(`${process.env.NEXT_PUBLIC_BACKEND_URL}/v1/countries`);
-            setCountries(response.data);
-        } catch (error) {
-            console.error('Error fetching countries:', error);
-        } finally {
-            setLoading(false);
-        }
-    };
+    // const fetchCountries = async () => {
+    //     try {
+    //         const response = await axios.get<Country[]>(`${process.env.NEXT_PUBLIC_BACKEND_URL}/v1/countries`);
+    //         setCountries(response.data);
+    //     } catch (error) {
+    //         console.error('Error fetching countries:', error);
+    //     } finally {
+    //         setLoading(false);
+    //     }
+    // };
 
     const fetchStates = async (countryCode: string) => {
         try {
@@ -40,6 +40,8 @@ export default function CityFilter() {
             setStates(response.data);
         } catch (error) {
             console.error('Error fetching states:', error);
+        } finally{
+            setLoading(false);
         }
     }
 
@@ -52,24 +54,28 @@ export default function CityFilter() {
         }
     }
 
+    // useEffect(() => {
+    //     fetchCountries();
+    // }, []);
+
+    // useEffect(() => {
+    //     if (selectedCountry) {
+    //         fetchStates(selectedCountry.isoCode);
+    //         setCities([]);
+    //         setSelectedCurrentCity('');
+    //         setSelectedState(null);
+    //     }
+    // }, [selectedCountry])
+
     useEffect(() => {
-        fetchCountries();
+        fetchStates('IN');
     }, []);
 
     useEffect(() => {
-        if (selectedCountry) {
-            fetchStates(selectedCountry.isoCode);
-            setCities([]);
-            setSelectedCurrentCity('');
-            setSelectedState(null);
+        if (selectedState) {
+            fetchCities('IN', selectedState.isoCode);
         }
-    }, [selectedCountry])
-
-    useEffect(() => {
-        if (selectedCountry && selectedState) {
-            fetchCities(selectedCountry.isoCode, selectedState.isoCode);
-        }
-    }, [selectedCountry, selectedState])
+    }, [selectedState])
 
     const handleSubmit = async (e: FormEvent) => {
         e.preventDefault();
@@ -101,7 +107,7 @@ export default function CityFilter() {
         <div className={`${height} flex items-center justify-center bg-gray-100`}>
             <div className="bg-white p-8 rounded-lg shadow-md w-96">
                 <form onSubmit={handleSubmit} className="space-y-4">
-                    <div>
+                    {/* <div>
                         <label htmlFor="country" className="block text-sm font-medium text-gray-700">
                             Select your country
                         </label>
@@ -120,7 +126,7 @@ export default function CityFilter() {
                                 </option>
                             ))}
                         </select>
-                    </div>
+                    </div> */}
                     <div>
                         <label htmlFor="state" className="block text-sm font-medium text-gray-700">
                             Select your state
@@ -134,7 +140,7 @@ export default function CityFilter() {
                                 setSelectedCurrentCity('');
                             }}
                             required
-                            disabled={!selectedCountry}
+                            // disabled={!selectedCountry}
                             className="mt-1 block w-full rounded-md p-3 border-gray-300 shadow-sm focus:border-black focus:ring-black sm:text-sm"
                         >
                             <option value="" disabled>Select your state</option>
