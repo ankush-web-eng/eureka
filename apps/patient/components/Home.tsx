@@ -1,4 +1,5 @@
 import Auth from "@/components/Auth";
+import CLinicLink from "./ClinicLink";
 
 export default function LandingPage() {
     return (
@@ -11,7 +12,10 @@ export default function LandingPage() {
                     <p className="mt-3 text-lg sm:text-xl text-slate-500">
                         Meet your favourite doctors and book appointments with ease without waiting in long queues.
                     </p>
-                    <Auth />
+                    <div className="flex space-x-2">
+                        <Auth />
+                        <CLinicLink />
+                    </div>
                 </div>
             </div>
         </div>
